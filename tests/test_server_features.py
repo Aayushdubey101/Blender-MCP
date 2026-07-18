@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import logging
 
-from blender_bridge.utils import READ_ONLY_ERROR, check_read_only
+from blender_mcp.utils import READ_ONLY_ERROR, check_read_only
 
 
 class TestCheckReadOnly:
@@ -22,7 +22,7 @@ class TestCheckReadOnly:
     def test_read_only_error_constant_is_valid_json(self):
         parsed = json.loads(READ_ONLY_ERROR)
         assert parsed["status"] == "error"
-        assert "BLENDER_BRIDGE_READ_ONLY" in parsed["message"]
+        assert "BLENDER_MCP_READ_ONLY" in parsed["message"]
 
     def test_check_read_only_returns_constant(self):
         assert check_read_only(True) == READ_ONLY_ERROR
@@ -30,7 +30,7 @@ class TestCheckReadOnly:
 
 class TestJsonFormatter:
     def _get_formatter(self):
-        from blender_bridge._log_formatter import JsonFormatter
+        from blender_mcp._log_formatter import JsonFormatter
 
         return JsonFormatter()
 
@@ -91,7 +91,7 @@ class TestJsonFormatter:
 
 
 class TestReadOnlyEnvVar:
-    """Test the env-var parsing logic for BLENDER_BRIDGE_READ_ONLY."""
+    """Test the env-var parsing logic for BLENDER_MCP_READ_ONLY."""
 
     @staticmethod
     def _parse(val: str) -> bool:

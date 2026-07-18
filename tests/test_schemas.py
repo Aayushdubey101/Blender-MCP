@@ -9,7 +9,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from blender_bridge.schemas import (
+from blender_mcp.schemas import (
     AddLightInput,
     CreatePrimitiveInput,
     DeleteObjectInput,

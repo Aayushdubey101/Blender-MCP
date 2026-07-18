@@ -1,13 +1,13 @@
-"""Hyper3D Rodin AI 3D generation plugin for MCP-Blender-Bridge.
+"""Hyper3D Rodin AI 3D generation plugin for Blender MCP.
 
 This plugin exposes Hyper3D's Rodin API as MCP tools, enabling AI-driven
 text-to-3D and image-to-3D asset generation directly from Claude/MCP clients.
 
 Usage
 -----
-Install the plugin into the same virtualenv as mcp-blender-bridge::
+Install the plugin into the same virtualenv as blender-mcp::
 
-    pip install mcp-blender-bridge-hyper3d
+    pip install blender-mcp-hyper3d
 
 Then set your API key::
 

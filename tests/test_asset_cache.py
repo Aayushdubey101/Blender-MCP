@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from blender_bridge.asset_cache import (
+from blender_mcp.asset_cache import (
     content_hash,
     get_plugin_cache_dir,
     prune_sha256_cache,
@@ -42,14 +42,14 @@ class TestContentHash:
 
 class TestGetPluginCacheDir:
     def test_creates_directory(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         d = get_plugin_cache_dir("myplugin", "uid-001")
         assert d.exists()
         assert d.is_dir()
         assert d == tmp_path / "myplugin" / "uid-001"
 
     def test_idempotent(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         d1 = get_plugin_cache_dir("plugin", "uid")
         d2 = get_plugin_cache_dir("plugin", "uid")
         assert d1 == d2
@@ -64,7 +64,7 @@ class TestSha256Cache:
     def test_miss_returns_none_before_store(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         data = b"new content nobody stored yet"
         result = sha256_cache_path(data, "model.glb")
         assert result is None
@@ -72,7 +72,7 @@ class TestSha256Cache:
     def test_hit_after_store(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         data = b"GLB binary content"
         stored = store_in_sha256_cache(data, "model.glb")
         assert stored.exists()
@@ -85,7 +85,7 @@ class TestSha256Cache:
     def test_store_idempotent(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         data = b"repeated content"
         p1 = store_in_sha256_cache(data, "file.glb")
         mtime_before = p1.stat().st_mtime
@@ -97,7 +97,7 @@ class TestSha256Cache:
     def test_different_filenames_separate_entries_same_content(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         data = b"same bytes"
         p1 = store_in_sha256_cache(data, "model.glb")
         p2 = store_in_sha256_cache(data, "model.obj")
@@ -108,7 +108,7 @@ class TestSha256Cache:
     def test_different_content_different_dirs(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         p1 = store_in_sha256_cache(b"content A", "f.glb")
         p2 = store_in_sha256_cache(b"content B", "f.glb")
         assert p1.parent != p2.parent
@@ -124,7 +124,7 @@ class TestPruneSha256Cache:
     async def test_prune_removes_old_entries(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
 
         # Store an entry
         stored = store_in_sha256_cache(b"old content", "old.glb")
@@ -143,7 +143,7 @@ class TestPruneSha256Cache:
     async def test_prune_keeps_fresh_entries(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         stored = store_in_sha256_cache(b"fresh content", "fresh.glb")
 
         removed = await prune_sha256_cache(max_age_days=30)
@@ -154,7 +154,7 @@ class TestPruneSha256Cache:
     async def test_prune_empty_dirs(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         # Create an empty dir inside sha256/
         sha_dir = tmp_path / "sha256"
         sha_dir.mkdir(parents=True)
@@ -167,6 +167,6 @@ class TestPruneSha256Cache:
     async def test_prune_no_entries_returns_zero(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         removed = await prune_sha256_cache(max_age_days=30)
         assert removed == 0

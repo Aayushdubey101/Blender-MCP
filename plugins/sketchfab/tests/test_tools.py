@@ -13,7 +13,7 @@ import httpx
 import pytest
 import respx
 
-from mcp_blender_bridge_sketchfab.schemas import (
+from blender_mcp_sketchfab.schemas import (
     SketchfabDownloadParams,
     SketchfabPreviewParams,
     SketchfabSearchParams,
@@ -33,7 +33,7 @@ def _make_tools(
     read_only: bool = False,
     cache_dir: str | None = None,
 ) -> dict[str, Any]:
-    from mcp_blender_bridge_sketchfab.tools import register_tools
+    from blender_mcp_sketchfab.tools import register_tools
 
     tools: dict[str, Any] = {}
 
@@ -49,7 +49,7 @@ def _make_tools(
     if api_key:
         env["SKETCHFAB_API_KEY"] = api_key
     if cache_dir:
-        env["BLENDER_BRIDGE_CACHE_DIR"] = cache_dir
+        env["BLENDER_MCP_CACHE_DIR"] = cache_dir
 
     with patch.dict(os.environ, env, clear=False):
         register_tools(FakeMCP(), client, read_only=read_only)  # type: ignore[arg-type]
@@ -286,7 +286,7 @@ class TestSketchfabDownload:
         tmp_path: Path,
     ) -> None:
         monkeypatch.setenv("SKETCHFAB_API_KEY", "test-api-key")
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
 
         uid = "download-uid-001"
         fake_download_url = "https://cdn.sketchfab.com/archives/model.zip"
@@ -306,7 +306,7 @@ class TestSketchfabDownload:
             return_value={"status": "success", "imported_objects": ["SketchfabMesh"]}
         )
 
-        from mcp_blender_bridge_sketchfab.tools import register_tools
+        from blender_mcp_sketchfab.tools import register_tools
 
         tools: dict[str, Any] = {}
 
@@ -319,7 +319,7 @@ class TestSketchfabDownload:
 
         with patch.dict(os.environ, {
             "SKETCHFAB_API_KEY": "test-api-key",
-            "BLENDER_BRIDGE_CACHE_DIR": str(tmp_path),
+            "BLENDER_MCP_CACHE_DIR": str(tmp_path),
         }):
             register_tools(FakeMCP(), client_mock)  # type: ignore[arg-type]
 

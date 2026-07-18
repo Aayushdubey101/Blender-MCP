@@ -1,6 +1,6 @@
-# mcp-blender-bridge-sketchfab
+# blender-mcp-sketchfab
 
-Sketchfab 3D model search and download plugin for [MCP-Blender-Bridge](../../README.md).
+Sketchfab 3D model search and download plugin for [Blender MCP](../../README.md).
 
 ## Tools
 
@@ -26,7 +26,7 @@ export SKETCHFAB_API_KEY="your-token-here"
 ### 3. Install the plugin
 
 ```bash
-pip install mcp-blender-bridge-sketchfab
+pip install blender-mcp-sketchfab
 ```
 
 ## Usage
@@ -47,7 +47,7 @@ Claude: Download it and bring it into Blender
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `SKETCHFAB_API_KEY` | For downloads | — | API token from Sketchfab settings |
-| `BLENDER_BRIDGE_CACHE_DIR` | No | `~/.cache/mcp-blender-bridge/assets/sketchfab` | Local cache for downloaded models |
+| `BLENDER_MCP_CACHE_DIR` | No | `~/.cache/blender-mcp/assets/sketchfab` | Local cache for downloaded models |
 
 ## Notes
 

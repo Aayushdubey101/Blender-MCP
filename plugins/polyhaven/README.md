@@ -1,22 +1,22 @@
-# MCP-Blender-Bridge PolyHaven Plugin
+# Blender MCP PolyHaven Plugin
 
-This is the PolyHaven asset library plugin for [MCP-Blender-Bridge](../../mcp-blender-bridge/).
+This is the PolyHaven asset library plugin for [Blender MCP](../../README.md).
 
 It provides 5 free, no-auth asset tools to search and import CC0 assets directly from PolyHaven into your Blender scenes.
 
 ## Installation
 
-Install this plugin into the same environment where your `mcp-blender-bridge` server is running:
+Install this plugin into the same environment where your `blender-mcp` server is running:
 
 ```bash
-uv add mcp-blender-bridge-polyhaven
+uv add blender-mcp-polyhaven
 ```
 
 ## Configuration
 
 The plugin caches downloaded textures and models to avoid re-downloading identical assets.
 
-- **`BLENDER_BRIDGE_CACHE_DIR`**: Optional. Sets the directory where assets are cached. Defaults to `~/.cache/mcp-blender-bridge/assets/polyhaven/`.
+- **`BLENDER_MCP_CACHE_DIR`**: Optional. Sets the directory where assets are cached. Defaults to `~/.cache/blender-mcp/assets/polyhaven/`.
 
 ## Provided Tools
 

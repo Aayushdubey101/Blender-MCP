@@ -1,20 +1,20 @@
-"""Plugin discovery and registration for MCP-Blender-Bridge.
+"""Plugin discovery and registration for Blender MCP.
 
 Plugins are separately-installable Python packages that register additional
 MCP tools (e.g. PolyHaven asset import, Hyper3D Rodin generation, Sketchfab).
 They are discovered at server startup via the standard
 ``importlib.metadata.entry_points`` mechanism on the
-``blender_bridge.plugins`` group.
+``blender_mcp.plugins`` group.
 
 A plugin package's ``pyproject.toml`` declares its entry point:
 
 .. code-block:: toml
 
-    [project.entry-points."blender_bridge.plugins"]
-    polyhaven = "mcp_blender_bridge_polyhaven:plugin"
+    [project.entry-points."blender_mcp.plugins"]
+    polyhaven = "blender_mcp_polyhaven:plugin"
 
-Where ``mcp_blender_bridge_polyhaven.plugin`` is an object that satisfies
-the :class:`BlenderBridgePlugin` protocol.
+Where ``blender_mcp_polyhaven.plugin`` is an object that satisfies
+the :class:`BlenderMCPPlugin` protocol.
 
 This loader is *opt-in by package install*: the core server ships with
 zero plugins. A plugin only runs if its package is installed in the same
@@ -33,11 +33,11 @@ from .client import BlenderClient
 
 logger = logging.getLogger(__name__)
 
-PLUGIN_GROUP = "blender_bridge.plugins"
+PLUGIN_GROUP = "blender_mcp.plugins"
 
 
 @runtime_checkable
-class BlenderBridgePlugin(Protocol):
+class BlenderMCPPlugin(Protocol):
     """Contract every plugin must satisfy.
 
     Attributes:
@@ -47,7 +47,7 @@ class BlenderBridgePlugin(Protocol):
     Methods:
         register: Register the plugin's MCP tools on the supplied ``mcp``
             instance, using the shared ``client`` to talk to Blender. The
-            ``read_only`` flag mirrors the server's ``BLENDER_BRIDGE_READ_ONLY``
+            ``read_only`` flag mirrors the server's ``BLENDER_MCP_READ_ONLY``
             env var; plugins must refuse to register destructive tools when
             it is True.
     """
@@ -77,13 +77,13 @@ def _iter_entry_points() -> list[EntryPoint]:
     return list(eps.get(PLUGIN_GROUP, []))  # type: ignore[attr-defined]
 
 
-def discover_plugins() -> list[BlenderBridgePlugin]:
+def discover_plugins() -> list[BlenderMCPPlugin]:
     """Load every installed plugin without registering it. Returns the plugin objects.
 
     Plugins that fail to load (import error, missing attributes, wrong type)
     are logged and skipped — one bad plugin must never bring the server down.
     """
-    loaded: list[BlenderBridgePlugin] = []
+    loaded: list[BlenderMCPPlugin] = []
     for ep in _iter_entry_points():
         try:
             obj = ep.load()
@@ -91,9 +91,9 @@ def discover_plugins() -> list[BlenderBridgePlugin]:
             logger.error("Failed to load plugin %r: %s", ep.name, e)
             continue
 
-        if not isinstance(obj, BlenderBridgePlugin):
+        if not isinstance(obj, BlenderMCPPlugin):
             logger.error(
-                "Entry point %r does not satisfy BlenderBridgePlugin protocol "
+                "Entry point %r does not satisfy BlenderMCPPlugin protocol "
                 "(missing name/version/register). Skipping.",
                 ep.name,
             )

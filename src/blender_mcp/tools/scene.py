@@ -52,7 +52,7 @@ def register(mcp: FastMCP, client: BlenderClient) -> None:
                 return format_error(
                     f"Protocol version mismatch: server={BRIDGE_PROTOCOL_VERSION!r}, "
                     f"addon={addon_protocol!r}. "
-                    "Update blender_addon/mcp_blender_bridge.py to the latest version."
+                    "Update blender_addon/blender_mcp.py to the latest version."
                 )
             return format_success(
                 {

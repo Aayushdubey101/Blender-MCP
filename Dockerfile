@@ -17,10 +17,10 @@ COPY src/ ./src/
 # Install the project itself
 RUN uv sync --frozen --no-dev
 
-ENV BLENDER_BRIDGE_HOST=host.docker.internal \
-    BLENDER_BRIDGE_PORT=9876 \
-    BLENDER_BRIDGE_LOG_FORMAT=json \
-    BLENDER_BRIDGE_LOG_LEVEL=INFO \
-    BLENDER_BRIDGE_READ_ONLY=false
+ENV BLENDER_MCP_HOST=host.docker.internal \
+    BLENDER_MCP_PORT=9876 \
+    BLENDER_MCP_LOG_FORMAT=json \
+    BLENDER_MCP_LOG_LEVEL=INFO \
+    BLENDER_MCP_READ_ONLY=false
 
-ENTRYPOINT ["uv", "run", "mcp-blender-bridge"]
+ENTRYPOINT ["uv", "run", "blender-mcp"]

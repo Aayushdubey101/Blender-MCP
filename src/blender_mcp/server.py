@@ -1,19 +1,19 @@
-"""MCP-Blender-Bridge server entry point.
+"""Blender MCP server entry point.
 
 Exposes Blender 3D operations to MCP-compatible clients (Claude Desktop,
 Claude Code, etc.) via the standard Model Context Protocol.
 
 Run locally with stdio transport (default):
 
-    uv run mcp-blender-bridge
+    uv run blender-mcp
 
 Or via HTTP (remote/render-farm) transport:
 
-    BLENDER_BRIDGE_AUTH_TOKEN=secret uv run mcp-blender-bridge --transport http
+    BLENDER_MCP_AUTH_TOKEN=secret uv run blender-mcp --transport http
 
 Or via the MCP Inspector for testing:
 
-    npx @modelcontextprotocol/inspector uv run mcp-blender-bridge
+    npx @modelcontextprotocol/inspector uv run blender-mcp
 """
 
 from __future__ import annotations
@@ -48,10 +48,10 @@ from .tools import scene as scene_tools
 # Logging bootstrap (happens before anything else)
 # ---------------------------------------------------------------------------
 
-_log_level = os.getenv("BLENDER_BRIDGE_LOG_LEVEL", "INFO")
-_log_format = os.getenv("BLENDER_BRIDGE_LOG_FORMAT", "text").lower()
-_read_only = os.getenv("BLENDER_BRIDGE_READ_ONLY", "false").lower() in ("1", "true", "yes")
-_persistent = os.getenv("BLENDER_BRIDGE_PERSISTENT", "false").lower() in ("1", "true", "yes")
+_log_level = os.getenv("BLENDER_MCP_LOG_LEVEL", "INFO")
+_log_format = os.getenv("BLENDER_MCP_LOG_FORMAT", "text").lower()
+_read_only = os.getenv("BLENDER_MCP_READ_ONLY", "false").lower() in ("1", "true", "yes")
+_persistent = os.getenv("BLENDER_MCP_PERSISTENT", "false").lower() in ("1", "true", "yes")
 
 if _log_format == "json":
     _handler = logging.StreamHandler()
@@ -65,7 +65,7 @@ else:
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
 
-logger = logging.getLogger("blender_bridge")
+logger = logging.getLogger("blender_mcp")
 
 # ---------------------------------------------------------------------------
 # Core server + client
@@ -74,8 +74,8 @@ logger = logging.getLogger("blender_bridge")
 mcp = FastMCP("blender_mcp")
 
 _client = BlenderClient(
-    host=os.getenv("BLENDER_BRIDGE_HOST", "127.0.0.1"),
-    port=int(os.getenv("BLENDER_BRIDGE_PORT", "9876")),
+    host=os.getenv("BLENDER_MCP_HOST", "127.0.0.1"),
+    port=int(os.getenv("BLENDER_MCP_PORT", "9876")),
     persistent=_persistent,
 )
 
@@ -145,7 +145,7 @@ def main() -> None:
     * ``--list-plugins`` — Print installed plugins and exit (does not start the server).
     """
     parser = argparse.ArgumentParser(
-        prog="mcp-blender-bridge",
+        prog="blender-mcp",
         description="Production-grade Blender MCP server",
     )
     parser.add_argument(
@@ -198,8 +198,8 @@ def main() -> None:
     if args.launch_blender:
         import asyncio as _asyncio
 
-        bridge_host = os.getenv("BLENDER_BRIDGE_HOST", "127.0.0.1")
-        bridge_port = int(os.getenv("BLENDER_BRIDGE_PORT", "9876"))
+        bridge_host = os.getenv("BLENDER_MCP_HOST", "127.0.0.1")
+        bridge_port = int(os.getenv("BLENDER_MCP_PORT", "9876"))
         try:
             _blender_proc = _asyncio.run(
                 launch_blender(
@@ -219,15 +219,15 @@ def main() -> None:
 
     if args.transport == "http" and host not in ("127.0.0.1", "localhost", "::1"):
         logger.warning(
-            "HTTP transport bound to non-loopback host %r — ensure BLENDER_BRIDGE_AUTH_TOKEN "
+            "HTTP transport bound to non-loopback host %r — ensure BLENDER_MCP_AUTH_TOKEN "
             "is rotated and the network path is trusted.",
             host,
         )
 
     logger.info(
-        "Starting MCP-Blender-Bridge v%s "
+        "Starting Blender MCP v%s "
         "(transport=%s, read_only=%s, persistent=%s, log_format=%s, plugins=%d)",
-        _pkg_version("mcp-blender-bridge"),
+        _pkg_version("blender-mcp"),
         args.transport,
         _read_only,
         _persistent,
@@ -246,10 +246,10 @@ def main() -> None:
         logger.warning("SHA256 cache prune failed (non-fatal): %s", exc)
 
     if args.transport == "http":
-        auth_token = os.getenv("BLENDER_BRIDGE_AUTH_TOKEN")
+        auth_token = os.getenv("BLENDER_MCP_AUTH_TOKEN")
         if not auth_token:
             sys.stderr.write(
-                "Error: BLENDER_BRIDGE_AUTH_TOKEN environment variable is required "
+                "Error: BLENDER_MCP_AUTH_TOKEN environment variable is required "
                 "when using HTTP transport.\n"
             )
             sys.exit(1)

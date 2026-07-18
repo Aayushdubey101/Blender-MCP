@@ -7,13 +7,13 @@ from unittest.mock import AsyncMock
 
 from mcp.server.fastmcp import FastMCP
 
-from blender_bridge.client import BRIDGE_PROTOCOL_VERSION, BlenderClient, BlenderConnectionError
-from blender_bridge.schemas import (
+from blender_mcp.client import BRIDGE_PROTOCOL_VERSION, BlenderClient, BlenderConnectionError
+from blender_mcp.schemas import (
     GetObjectInfoInput,
     GetSceneInfoInput,
     ListObjectsInput,
 )
-from blender_bridge.tools import scene as scene_tools
+from blender_mcp.tools import scene as scene_tools
 
 
 def _make_mcp():
@@ -46,7 +46,7 @@ class TestBlenderPing:
             {
                 "pong": True,
                 "blender_version": "4.1.0",
-                "bridge_version": "0.2.0",
+                "bridge_version": "0.4.1",
                 "protocol_version": BRIDGE_PROTOCOL_VERSION,
             }
         )

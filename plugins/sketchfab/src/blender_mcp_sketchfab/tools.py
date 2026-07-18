@@ -48,8 +48,8 @@ def _get_api_key() -> str | None:
 def _get_cache_dir(uid: str) -> Path:
     """Return (and create) the cache directory for a given model UID."""
     base = os.environ.get(
-        "BLENDER_BRIDGE_CACHE_DIR",
-        str(Path.home() / ".cache" / "mcp-blender-bridge" / "assets" / "sketchfab"),
+        "BLENDER_MCP_CACHE_DIR",
+        str(Path.home() / ".cache" / "blender-mcp" / "assets" / "sketchfab"),
     )
     path = Path(base) / uid
     path.mkdir(parents=True, exist_ok=True)

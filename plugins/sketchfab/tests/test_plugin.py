@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from mcp_blender_bridge_sketchfab.plugin import SketchfabPlugin
+from blender_mcp_sketchfab.plugin import SketchfabPlugin
 
 
 class TestSketchfabPlugin:
@@ -21,7 +21,7 @@ class TestSketchfabPlugin:
             called_with.append((mcp, client, read_only))
 
         monkeypatch.setattr(
-            "mcp_blender_bridge_sketchfab.tools.register_tools",
+            "blender_mcp_sketchfab.tools.register_tools",
             fake_register_tools,
         )
 
@@ -35,6 +35,6 @@ class TestSketchfabPlugin:
         assert ro is True
 
     def test_module_exports_plugin_singleton(self) -> None:
-        import mcp_blender_bridge_sketchfab as pkg
+        import blender_mcp_sketchfab as pkg
 
         assert isinstance(pkg.plugin, SketchfabPlugin)

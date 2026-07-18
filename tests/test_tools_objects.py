@@ -7,8 +7,8 @@ from unittest.mock import AsyncMock
 
 from mcp.server.fastmcp import FastMCP
 
-from blender_bridge.client import BlenderClient, BlenderConnectionError
-from blender_bridge.schemas import (
+from blender_mcp.client import BlenderClient, BlenderConnectionError
+from blender_mcp.schemas import (
     AddLightInput,
     CreatePrimitiveInput,
     DeleteObjectInput,
@@ -17,7 +17,7 @@ from blender_bridge.schemas import (
     SetMaterialInput,
     TransformObjectInput,
 )
-from blender_bridge.tools import objects as object_tools
+from blender_mcp.tools import objects as object_tools
 
 
 def _make_mcp(read_only: bool = False):

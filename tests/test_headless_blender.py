@@ -20,7 +20,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from blender_bridge.headless_blender import (
+from blender_mcp.headless_blender import (
     BLENDER_LAUNCH_TIMEOUT,
     _make_bootstrap_script,
     _wait_for_port,
@@ -85,24 +85,24 @@ class TestFindBlender:
 
 class TestMakeBootstrapScript:
     def test_contains_addon_path(self, tmp_path: Path) -> None:
-        addon = tmp_path / "mcp_blender_bridge.py"
+        addon = tmp_path / "blender_mcp.py"
         script = _make_bootstrap_script(addon, 9876)
         assert str(addon) in script
 
     def test_contains_port(self, tmp_path: Path) -> None:
-        addon = tmp_path / "mcp_blender_bridge.py"
+        addon = tmp_path / "blender_mcp.py"
         script = _make_bootstrap_script(addon, 12345)
         assert "12345" in script
 
     def test_contains_start_server_call(self, tmp_path: Path) -> None:
-        addon = tmp_path / "mcp_blender_bridge.py"
+        addon = tmp_path / "blender_mcp.py"
         script = _make_bootstrap_script(addon, 9876)
         assert "start_server" in script
 
     def test_is_valid_python_syntax(self, tmp_path: Path) -> None:
         import ast
 
-        addon = tmp_path / "mcp_blender_bridge.py"
+        addon = tmp_path / "blender_mcp.py"
         script = _make_bootstrap_script(addon, 9876)
         # Should not raise
         ast.parse(script)
@@ -151,7 +151,7 @@ class TestLaunchBlender:
         monkeypatch.delenv("BLENDER_PATH", raising=False)
         with patch("shutil.which", return_value=None):
             with pytest.raises(FileNotFoundError):
-                from blender_bridge.headless_blender import launch_blender
+                from blender_mcp.headless_blender import launch_blender
 
                 await launch_blender(None, "127.0.0.1", 9876)
 
@@ -162,7 +162,7 @@ class TestLaunchBlender:
         """If Blender starts but addon never listens, raise RuntimeError."""
         exe = tmp_path / "blender"
         exe.touch()
-        addon = tmp_path / "mcp_blender_bridge.py"
+        addon = tmp_path / "blender_mcp.py"
         addon.touch()
 
         fake_proc = MagicMock()
@@ -170,18 +170,18 @@ class TestLaunchBlender:
         fake_proc.terminate = MagicMock()
 
         with (
-            patch("blender_bridge.headless_blender.find_blender", return_value=exe),
-            patch("blender_bridge.headless_blender._addon_path", return_value=addon),
+            patch("blender_mcp.headless_blender.find_blender", return_value=exe),
+            patch("blender_mcp.headless_blender._addon_path", return_value=addon),
             patch(
                 "asyncio.create_subprocess_exec",
                 new=AsyncMock(return_value=fake_proc),
             ),
             patch(
-                "blender_bridge.headless_blender._wait_for_port",
+                "blender_mcp.headless_blender._wait_for_port",
                 new=AsyncMock(return_value=False),
             ),
         ):
-            from blender_bridge.headless_blender import launch_blender
+            from blender_mcp.headless_blender import launch_blender
 
             with pytest.raises(RuntimeError, match="never.*opened port"):
                 await launch_blender(str(exe), "127.0.0.1", 9876)
@@ -195,25 +195,25 @@ class TestLaunchBlender:
         """Happy path: process returned when addon port opens."""
         exe = tmp_path / "blender"
         exe.touch()
-        addon = tmp_path / "mcp_blender_bridge.py"
+        addon = tmp_path / "blender_mcp.py"
         addon.touch()
 
         fake_proc = MagicMock()
         fake_proc.pid = 1234
 
         with (
-            patch("blender_bridge.headless_blender.find_blender", return_value=exe),
-            patch("blender_bridge.headless_blender._addon_path", return_value=addon),
+            patch("blender_mcp.headless_blender.find_blender", return_value=exe),
+            patch("blender_mcp.headless_blender._addon_path", return_value=addon),
             patch(
                 "asyncio.create_subprocess_exec",
                 new=AsyncMock(return_value=fake_proc),
             ),
             patch(
-                "blender_bridge.headless_blender._wait_for_port",
+                "blender_mcp.headless_blender._wait_for_port",
                 new=AsyncMock(return_value=True),
             ),
         ):
-            from blender_bridge.headless_blender import launch_blender
+            from blender_mcp.headless_blender import launch_blender
 
             proc = await launch_blender(str(exe), "127.0.0.1", 9876)
             assert proc is fake_proc

@@ -1,47 +1,80 @@
-# MCP-Blender-Bridge
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<div align="center">
+
+<a href="https://github.com/Aayushdubey101/Blender-MCP">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:EA7600,50:F5792A,100:1a1a2e&height=200&section=header&text=Blender-MCP&fontSize=60&fontColor=ffffff&fontAlignY=38&animation=fadeIn&desc=Drive%20Blender%203D%20with%20natural%20language%20over%20MCP&descSize=16&descAlignY=58" alt="Blender-MCP" />
+</a>
+
+<a href="https://github.com/Aayushdubey101/Blender-MCP">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&duration=3000&pause=800&color=F5792A&center=true&vCenter=true&width=720&height=45&lines=Pydantic-validated+%E2%80%A2+Zero+telemetry;Async-native+%E2%80%A2+Plugin-extensible;207+tests+%E2%80%A2+90%25+coverage;You+talk.+The+AI+drives+Blender." alt="Typing SVG" />
+</a>
+
+<br/>
+
+<a href="https://github.com/Aayushdubey101/Blender-MCP/releases"><img src="https://img.shields.io/badge/version-0.4.1-F5792A?style=for-the-badge" alt="version" /></a>
+<img src="https://img.shields.io/badge/python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="python" />
+<img src="https://img.shields.io/badge/MCP-1.0-000000?style=for-the-badge" alt="mcp" />
+<img src="https://img.shields.io/badge/tests-207%20passing-4CAF50?style=for-the-badge" alt="tests" />
+<img src="https://img.shields.io/badge/coverage-90%25-4CAF50?style=for-the-badge" alt="coverage" />
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge" alt="license" /></a>
+<a href="https://docs.astral.sh/uv/"><img src="https://img.shields.io/badge/managed%20by-uv-6340AC?style=for-the-badge" alt="uv" /></a>
+
+<br/><br/>
+
+**[What it is](#-what-this-is) · [Why not the alternative](#-why-use-this-instead-of-ahujasidblender-mcp) · [Tools](#-tools-v041) · [Quick start](#-quick-start) · [Config](#-configuration) · [Docker](#-docker) · [Architecture](#-project-layout)**
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
 
 > **Production-grade Blender automation over the Model Context Protocol.**
 > Pydantic-validated • Zero telemetry • Async-native • Pytest-covered • Plugin-extensible
 >
-> Part of the [MCP-HUB](../README.md) project.
-
-[![Version](https://img.shields.io/badge/version-0.4.1-blue.svg)]()
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)]()
-[![Tests](https://img.shields.io/badge/tests-207%20passing-brightgreen.svg)]()
-[![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen.svg)]()
-[![License](https://img.shields.io/badge/license-MIT-yellow.svg)]()
-[![uv](https://img.shields.io/badge/managed%20by-uv-purple.svg)](https://docs.astral.sh/uv/)
+> Sibling project in the [MCP-HUB](https://github.com/Aayushdubey101/MCP-HUB) collection.
 
 ---
 
-## What this is
+## 🎯 What this is
 
-`mcp-blender-bridge` connects Blender 3D to any MCP-compatible AI assistant
+`blender-mcp` connects Blender 3D to any MCP-compatible AI assistant
 (Claude Desktop, Claude Code, Cursor, Continue, Cline, …). After a one-time
 setup, you tell the assistant what you want, and it drives Blender for you —
 creating objects, applying materials, lighting the scene, framing cameras,
 rendering. **The assistant takes the wheel; you watch it work.**
 
-```
-┌────────────────┐    MCP/stdio     ┌──────────────────┐    TCP/JSON    ┌──────────┐
-│ Claude / IDE   │ ◄──────────────► │  Bridge server   │ ◄────────────► │ Blender  │
-│ (your prompt)  │                  │  (this package)  │                │  addon   │
-└────────────────┘                  └──────────────────┘                └──────────┘
+```mermaid
+flowchart LR
+    U["🧑 You<br/><i>natural language</i>"]:::user
+    AI["🤖 AI Client<br/>Claude · Cursor · Cline"]:::ai
+    B["🌉 Bridge Server<br/><i>this package</i>"]:::bridge
+    BL["🟠 Blender Addon<br/><i>main-thread exec</i>"]:::blender
+
+    U -->|prompt| AI
+    AI <-->|"MCP · stdio / http / sse"| B
+    B <-->|"TCP JSON · 127.0.0.1:9876"| BL
+    BL -.->|screenshot · render · scene data| B
+    B -.->|tool result| AI
+    AI -.->|answer| U
+
+    classDef user fill:#2d3436,stroke:#636e72,color:#fff
+    classDef ai fill:#0984e3,stroke:#74b9ff,color:#fff
+    classDef bridge fill:#6c5ce7,stroke:#a29bfe,color:#fff
+    classDef blender fill:#EA7600,stroke:#F5792A,color:#fff
 ```
 
 Two halves:
 - **Bridge server** (this Python package, run via `uv`) — speaks MCP to the AI client.
-- **Blender addon** (`blender_addon/mcp_blender_bridge.py`) — runs inside Blender, executes commands on the main thread.
+- **Blender addon** (`blender_addon/blender_mcp.py`) — runs inside Blender, executes commands on the main thread.
 
 ---
 
-## Why use this instead of `ahujasid/blender-mcp`?
+## ⚔️ Why use this instead of `ahujasid/blender-mcp`?
 
 The `blender-mcp` project pioneered the space. We respect that. We're built
 for a different audience: **studios, technical artists, and pipeline engineers
 who need verifiable, auditable, production-grade tooling.**
 
-| Dimension | `mcp-blender-bridge` (this) | `ahujasid/blender-mcp` |
+| Dimension | ✅ `blender-mcp` (this) | `ahujasid/blender-mcp` |
 |---|---|---|
 | Telemetry | **None.** Zero phone-home. | Default-on Supabase telemetry |
 | Input validation | Pydantic v2 with `extra="forbid"` everywhere | None — raw kwargs |
@@ -50,8 +83,8 @@ who need verifiable, auditable, production-grade tooling.**
 | CI | GitHub Actions on Python 3.10 / 3.11 / 3.12 | None |
 | Architecture | Modular package, ~8 files | Monolithic 1186-line `server.py` |
 | Tool annotations | All 4 MCP hints on every tool | Mostly omitted |
-| Read-only mode | `BLENDER_BRIDGE_READ_ONLY=true` | None |
-| Structured logging | `BLENDER_BRIDGE_LOG_FORMAT=json` | Plain strings |
+| Read-only mode | `BLENDER_MCP_READ_ONLY=true` | None |
+| Structured logging | `BLENDER_MCP_LOG_FORMAT=json` | Plain strings |
 | Protocol versioning | `BRIDGE_PROTOCOL_VERSION="1.0"` enforced | None |
 | Docker | `Dockerfile` + `docker-compose.yml` | None |
 | Hardcoded third-party keys | **None** — bring your own | `RODIN_FREE_TRIAL_KEY` baked into source |
@@ -62,11 +95,14 @@ to you, this is the one to use.
 
 ---
 
-## Tools (v0.4.1)
+## 🧰 Tools (v0.4.1)
 
-### Core — 13 tools, all Pydantic-validated with full MCP annotations
+**15 core tools**, all Pydantic-validated with full MCP annotations, plus opt-in plugin packs.
 
-#### Inspection (read-only)
+<details open>
+<summary><b>🔍 Inspection — read-only (5)</b></summary>
+
+<br/>
 
 | Tool | Purpose |
 |------|---------|
@@ -76,7 +112,12 @@ to you, this is the one to use.
 | `blender_get_object_info` | Full per-object detail (transform, dimensions, materials, mesh/light/camera specifics) |
 | `blender_get_viewport_screenshot` | Inline PNG of the active viewport |
 
-#### Authoring (destructive — disabled in read-only mode)
+</details>
+
+<details>
+<summary><b>🛠️ Authoring — destructive, disabled in read-only mode (8)</b></summary>
+
+<br/>
 
 | Tool | Purpose |
 |------|---------|
@@ -89,14 +130,31 @@ to you, this is the one to use.
 | `blender_render_image` | Render a frame; returns metadata + inline PNG preview |
 | `blender_execute_python` | Power-user escape hatch (`bpy` available, set `result` to return) |
 
-### Plugins — opt-in, separately installable
+</details>
+
+<details>
+<summary><b>💾 File management (2)</b></summary>
+
+<br/>
+
+| Tool | Purpose |
+|------|---------|
+| `blender_save_file` | Save the current `.blend` (optional target path) |
+| `blender_open_file` | Open a `.blend` from disk |
+
+</details>
+
+### 🔌 Plugins — opt-in, separately installable
 
 Each plugin is a pip package that registers additional tools via the entry-point
 system. Install only what you need. All require **zero** pre-configured secrets
 at server startup — keys are checked at *call time*, so the server always boots
 cleanly.
 
-#### `mcp-blender-bridge-polyhaven` (free, no key needed)
+<details>
+<summary><b>🟢 <code>blender-mcp-polyhaven</code> — free, no key needed (5)</b></summary>
+
+<br/>
 
 | Tool | Purpose |
 |------|---------|
@@ -107,10 +165,15 @@ cleanly.
 | `polyhaven_apply_texture` | Download + apply texture to an object in Blender |
 
 ```bash
-pip install mcp-blender-bridge-polyhaven
+pip install blender-mcp-polyhaven
 ```
 
-#### `mcp-blender-bridge-hyper3d` (requires `HYPER3D_API_KEY`)
+</details>
+
+<details>
+<summary><b>🔷 <code>blender-mcp-hyper3d</code> — requires <code>HYPER3D_API_KEY</code> (5)</b></summary>
+
+<br/>
 
 | Tool | Purpose |
 |------|---------|
@@ -121,11 +184,16 @@ pip install mcp-blender-bridge-polyhaven
 | `hyper3d_import` | Poll + download + import GLTF/FBX/OBJ/STL into Blender |
 
 ```bash
-pip install mcp-blender-bridge-hyper3d
+pip install blender-mcp-hyper3d
 export HYPER3D_API_KEY="your-key"  # https://hyper3d.ai
 ```
 
-#### `mcp-blender-bridge-sketchfab` (requires `SKETCHFAB_API_KEY` for downloads)
+</details>
+
+<details>
+<summary><b>🟣 <code>blender-mcp-sketchfab</code> — requires <code>SKETCHFAB_API_KEY</code> for downloads (4)</b></summary>
+
+<br/>
 
 | Tool | Purpose |
 |------|---------|
@@ -135,13 +203,15 @@ export HYPER3D_API_KEY="your-key"  # https://hyper3d.ai
 | `sketchfab_download` | Download GLTF + import into Blender |
 
 ```bash
-pip install mcp-blender-bridge-sketchfab
+pip install blender-mcp-sketchfab
 export SKETCHFAB_API_KEY="your-token"  # https://sketchfab.com/settings#password
 ```
 
+</details>
+
 ---
 
-## Quick start
+## 🚀 Quick start
 
 ### Prerequisites
 
@@ -157,9 +227,16 @@ export SKETCHFAB_API_KEY="your-token"  # https://sketchfab.com/settings#password
   curl -LsSf https://astral.sh/uv/install.sh | sh
   ```
 
+### 0 · Clone
+
+```bash
+git clone https://github.com/Aayushdubey101/Blender-MCP.git
+cd Blender-MCP
+```
+
 ### 1 · Install dependencies
 
-From `mcp-blender-bridge/`:
+From the repo root:
 
 ```bash
 uv sync
@@ -168,8 +245,8 @@ uv sync
 ### 2 · Install the Blender addon
 
 1. Open Blender → **Edit → Preferences → Add-ons → Install…**
-2. Pick `blender_addon/mcp_blender_bridge.py`
-3. Tick the checkbox next to **"Development: MCP Blender Bridge"**
+2. Pick `blender_addon/blender_mcp.py`
+3. Tick the checkbox next to **"Development: Blender MCP"**
 4. In the 3D viewport press **N** → **MCP** tab → **▶ Start MCP Bridge**
 
 You should see in Blender's system console:
@@ -181,7 +258,7 @@ You should see in Blender's system console:
 ### 3 · Smoke-test the server
 
 ```bash
-uv run mcp-blender-bridge
+uv run blender-mcp
 ```
 
 It will block on stdin — that's correct (MCP stdio transport).
@@ -190,7 +267,7 @@ Press Ctrl-C. A clean run with no errors means you're good.
 For a full interactive test, use the official inspector:
 
 ```bash
-npx @modelcontextprotocol/inspector uv run mcp-blender-bridge
+npx @modelcontextprotocol/inspector uv run blender-mcp
 ```
 
 ### 4 · Wire it into your AI client
@@ -198,10 +275,13 @@ npx @modelcontextprotocol/inspector uv run mcp-blender-bridge
 A ready-to-copy template is at [`.mcp.json.example`](.mcp.json.example).
 Copy it, rename to `.mcp.json` (gitignored), and replace the path.
 
-Replace `<path-to-mcp-blender-bridge>` with the **absolute path** to this directory
-(e.g. `C:\Projects\MCP-HUB\mcp-blender-bridge` on Windows, `/home/you/MCP-HUB/mcp-blender-bridge` on Linux/macOS).
+Replace `<path-to-Blender-MCP>` with the **absolute path** to this repo
+(e.g. `C:\Projects\Blender-MCP` on Windows, `/home/you/Blender-MCP` on Linux/macOS).
 
-#### Claude Desktop
+<details>
+<summary><b>Claude Desktop</b></summary>
+
+<br/>
 
 `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or
 `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
@@ -213,19 +293,24 @@ Replace `<path-to-mcp-blender-bridge>` with the **absolute path** to this direct
       "command": "uv",
       "args": [
         "--directory",
-        "<path-to-mcp-blender-bridge>",
+        "<path-to-Blender-MCP>",
         "run",
-        "mcp-blender-bridge"
+        "blender-mcp"
       ]
     }
   }
 }
 ```
 
-#### Claude Code (CLI)
+</details>
+
+<details>
+<summary><b>Claude Code (CLI)</b></summary>
+
+<br/>
 
 ```bash
-claude mcp add blender -- uv --directory <path-to-mcp-blender-bridge> run mcp-blender-bridge
+claude mcp add blender -- uv --directory <path-to-Blender-MCP> run blender-mcp
 ```
 
 Or add manually to `~/.claude/settings.json`:
@@ -235,13 +320,18 @@ Or add manually to `~/.claude/settings.json`:
   "mcpServers": {
     "blender": {
       "command": "uv",
-      "args": ["--directory", "<path-to-mcp-blender-bridge>", "run", "mcp-blender-bridge"]
+      "args": ["--directory", "<path-to-Blender-MCP>", "run", "blender-mcp"]
     }
   }
 }
 ```
 
-#### Cursor / Cline / Continue
+</details>
+
+<details>
+<summary><b>Cursor / Cline / Continue / any MCP client</b></summary>
+
+<br/>
 
 `.cursor/mcp.json` (or the equivalent config file for your client):
 
@@ -250,21 +340,21 @@ Or add manually to `~/.claude/settings.json`:
   "mcpServers": {
     "blender": {
       "command": "uv",
-      "args": ["--directory", "<path-to-mcp-blender-bridge>", "run", "mcp-blender-bridge"]
+      "args": ["--directory", "<path-to-Blender-MCP>", "run", "blender-mcp"]
     }
   }
 }
 ```
 
-#### Continue / Cline / any other MCP client
+Same shape everywhere — `command: uv`, `args: [--directory <path>, run, blender-mcp]`. See your client's MCP docs for the exact config file.
 
-Same shape — `command: uv`, `args: [--directory <path>, run, mcp-blender-bridge]`. See your client's MCP docs for the exact config file.
+</details>
 
 ### 5 · Drive Blender with natural language
 
 With Blender open, addon enabled, **Start MCP Bridge** running, and your AI
-client restarted — just ask. The assistant will pick the right tools, validate
-inputs, and execute. You sit back.
+client restarted — just ask. The assistant picks the right tools, validates
+inputs, and executes. You sit back.
 
 ```
 You: Build a still-life scene. Put a glossy red sphere on a matte grey plane,
@@ -272,47 +362,67 @@ You: Build a still-life scene. Put a glossy red sphere on a matte grey plane,
      frame a 50mm camera looking down at 30°, then render at 720p with EEVEE.
 ```
 
-The assistant will call, in order:
-`blender_ping` → `blender_create_primitive(plane)` → `blender_set_material(plane, grey)` →
-`blender_create_primitive(sphere)` → `blender_set_material(sphere, red, roughness=0.1)` →
-`blender_add_light(spot, warm)` → `blender_add_light(area, cool)` →
-`blender_set_camera(loc, target, lens=50)` → `blender_render_image(engine=EEVEE)`.
+...and here is the exact tool flow the assistant drives:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor You
+    participant AI as 🤖 AI Client
+    participant Bridge as 🌉 Bridge
+    participant Blender as 🟠 Blender
+
+    You->>AI: "Glossy red sphere on grey plane, warm key + cool rim, 50mm cam, 720p"
+    AI->>Bridge: blender_ping
+    Bridge->>Blender: ping
+    Blender-->>Bridge: pong · v4.2 · protocol 1.0
+    loop build the scene
+        AI->>Bridge: create_primitive · set_material · add_light · set_camera
+        Bridge->>Blender: execute on main thread
+        Blender-->>Bridge: status success
+    end
+    AI->>Bridge: blender_render_image (EEVEE, 720p)
+    Bridge->>Blender: render frame
+    Blender-->>Bridge: PNG preview + metadata
+    Bridge-->>AI: inline image
+    AI-->>You: "Done — here's your render ✨"
+```
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 Every option is an environment variable. None are required; all have
 sensible defaults. Copy `.env.example` to `.env` to customize.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `BLENDER_BRIDGE_HOST` | `127.0.0.1` | Where the Blender addon is listening |
-| `BLENDER_BRIDGE_PORT` | `9876` | Same — match the N-panel value |
-| `BLENDER_BRIDGE_LOG_LEVEL` | `INFO` | `DEBUG` / `INFO` / `WARNING` / `ERROR` |
-| `BLENDER_BRIDGE_LOG_FORMAT` | `text` | `text` for humans, `json` for log infra |
-| `BLENDER_BRIDGE_READ_ONLY` | `false` | `true` disables every destructive tool |
+| `BLENDER_MCP_HOST` | `127.0.0.1` | Where the Blender addon is listening |
+| `BLENDER_MCP_PORT` | `9876` | Same — match the N-panel value |
+| `BLENDER_MCP_LOG_LEVEL` | `INFO` | `DEBUG` / `INFO` / `WARNING` / `ERROR` |
+| `BLENDER_MCP_LOG_FORMAT` | `text` | `text` for humans, `json` for log infra |
+| `BLENDER_MCP_READ_ONLY` | `false` | `true` disables every destructive tool |
 
 ### Read-only mode (safe demos)
 
 ```bash
-BLENDER_BRIDGE_READ_ONLY=true uv run mcp-blender-bridge
+BLENDER_MCP_READ_ONLY=true uv run blender-mcp
 ```
 
 `blender_create_primitive`, `blender_render_image`, `blender_execute_python`, etc.
-will all return a structured "read-only mode" error. Inspection tools still work.
+all return a structured "read-only mode" error. Inspection tools still work.
 
 ### JSON logging (log infra)
 
 ```bash
-BLENDER_BRIDGE_LOG_FORMAT=json uv run mcp-blender-bridge
+BLENDER_MCP_LOG_FORMAT=json uv run blender-mcp
 ```
 
 Each line is a single JSON object — ship straight to Loki / Datadog / CloudWatch.
 
 ---
 
-## Docker
+## 🐳 Docker
 
 For headless / render-farm setups. The container talks to a Blender instance
 running on the host:
@@ -327,29 +437,29 @@ inside the container). On Linux the compose file already maps
 
 ---
 
-## Project layout
+## 📂 Project layout
 
 ```
-mcp-blender-bridge/
-├── src/blender_bridge/
+Blender-MCP/
+├── src/blender_mcp/
 │   ├── server.py              # MCP entry point; transport (stdio / http / sse)
 │   ├── client.py              # Async TCP client, per-call + persistent modes
 │   ├── schemas.py             # Pydantic v2 input models
 │   ├── utils.py               # format_error / format_success / read-only guard
-│   ├── plugins/               # Plugin loader + BlenderBridgePlugin Protocol
+│   ├── plugins/               # Plugin loader + BlenderMCPPlugin Protocol
 │   ├── _log_formatter.py      # JSON log formatter
 │   └── tools/
-│       ├── scene.py           # 5 read-only tools
-│       ├── objects.py         # 6 destructive object/material/light/camera tools
+│       ├── scene.py           # inspection + file-management tools
+│       ├── objects.py         # destructive object/material/light/camera tools
 │       ├── render.py          # blender_render_image
 │       └── code.py            # blender_execute_python (escape hatch)
 ├── blender_addon/
-│   └── mcp_blender_bridge.py  # Install this in Blender
+│   └── blender_mcp.py  # Install this in Blender
 ├── plugins/
-│   ├── polyhaven/             # pip install mcp-blender-bridge-polyhaven
-│   ├── hyper3d/               # pip install mcp-blender-bridge-hyper3d
-│   └── sketchfab/             # pip install mcp-blender-bridge-sketchfab
-├── tests/                     # 176 core tests, 89% coverage
+│   ├── polyhaven/             # pip install blender-mcp-polyhaven
+│   ├── hyper3d/               # pip install blender-mcp-hyper3d
+│   └── sketchfab/             # pip install blender-mcp-sketchfab
+├── tests/                     # core test suite
 ├── docs/
 │   └── ARCHITECTURE.md        # Process model, threading, response shape, extensibility
 ├── examples/
@@ -359,7 +469,7 @@ mcp-blender-bridge/
 ├── pyproject.toml             # uv / build configuration
 ├── .env.example
 ├── CHANGELOG.md
-├── TASK.md                    # Roadmap to plugin-rich v1.0
+├── LICENSE
 └── README.md
 ```
 
@@ -367,60 +477,95 @@ For deeper internals see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
-## Development
+## 🧪 Development
 
 ```bash
 uv sync --extra dev          # install dev deps
-uv run pytest                # 176 core tests, ~2s
+uv run pytest                # core tests, ~2s
 uv run pytest --cov=src      # with coverage
 uv run ruff check src/       # lint
 uv run ruff format src/      # format
 uv run mypy src/             # type-check
 
 # Run plugin tests
-uv run pytest plugins/polyhaven/tests/    # 15 tests
-uv run pytest plugins/hyper3d/tests/     # 44 tests
-uv run pytest plugins/sketchfab/tests/   # 33 tests
+uv run pytest plugins/polyhaven/tests/    # 23 tests
+uv run pytest plugins/hyper3d/tests/      # 44 tests
+uv run pytest plugins/sketchfab/tests/    # 33 tests
 ```
 
 CI runs the same matrix on every push (Python 3.10 / 3.11 / 3.12).
 
 ---
 
-## Roadmap
-
-The full plan lives in [`TASK.md`](TASK.md). High level:
+## 🗺️ Roadmap
 
 - **v0.3.0** ✅ — Plugin architecture, PolyHaven + Hyper3D + Sketchfab plugins, persistent connection, HTTP transport.
-- **v0.4.0** — SHA256 asset cache, headless `--background` Blender control.
-- **v1.0.0** — Final polish, architecture diagram, full comparison table green on every row.
+- **v0.4.x** ✅ — SHA256 asset cache, headless `--background` Blender control, file management tools.
+- **v1.0.0** — Final polish, full comparison table green on every row.
 
 ---
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
-**"Could not connect to Blender at 127.0.0.1:9876"**
-Open Blender, Preferences → Add-ons, enable *MCP Blender Bridge*, then in the
+<details>
+<summary><b>"Could not connect to Blender at 127.0.0.1:9876"</b></summary>
+
+Open Blender, Preferences → Add-ons, enable *Blender MCP*, then in the
 3D viewport's N-panel → MCP tab → click **▶ Start MCP Bridge**.
 
-**"Port already in use"**
-Change the port in the addon N-panel and set
-`BLENDER_BRIDGE_PORT` to match.
+</details>
 
-**"Tools don't show up in Claude Desktop"**
+<details>
+<summary><b>"Port already in use"</b></summary>
+
+Change the port in the addon N-panel and set `BLENDER_MCP_PORT` to match.
+
+</details>
+
+<details>
+<summary><b>"Tools don't show up in Claude Desktop"</b></summary>
+
 Verify the absolute path in `claude_desktop_config.json`, then fully quit and
 relaunch Claude Desktop (Cmd-Q / right-click tray icon → Quit).
 
-**"Render timed out"**
+</details>
+
+<details>
+<summary><b>"Render timed out"</b></summary>
+
 Pass `timeout_seconds=600` (or higher) on the `blender_render_image` call for
 heavy Cycles renders. Default is 300s.
 
-**"Protocol version mismatch"**
-Re-install `blender_addon/mcp_blender_bridge.py` in Blender — your addon and
+</details>
+
+<details>
+<summary><b>"Protocol version mismatch"</b></summary>
+
+Re-install `blender_addon/blender_mcp.py` in Blender — your addon and
 server are out of sync.
+
+</details>
 
 ---
 
-## License
+## ⭐ Star history
 
-MIT — see the parent [MCP-HUB LICENSE](../LICENSE).
+<div align="center">
+
+<a href="https://star-history.com/#Aayushdubey101/Blender-MCP&Date">
+  <img src="https://api.star-history.com/svg?repos=Aayushdubey101/Blender-MCP&type=Date" alt="Star History Chart" width="600" />
+</a>
+
+</div>
+
+---
+
+## 📜 License
+
+MIT — see [`LICENSE`](LICENSE).
+
+<div align="center">
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a1a2e,50:F5792A,100:EA7600&height=100&section=footer" alt="footer" />
+
+</div>

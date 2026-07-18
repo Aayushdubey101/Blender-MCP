@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to **mcp-blender-bridge** are documented here.
+All notable changes to **blender-mcp** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [SemVer](https://semver.org/).
 
@@ -24,17 +24,17 @@ versioning follows [SemVer](https://semver.org/).
 ## [0.3.1] — 2026-05-09
 
 ### Added
-- **PolyHaven plugin** (`mcp-blender-bridge-polyhaven`) — 5 tools for browsing and
+- **PolyHaven plugin** (`blender-mcp-polyhaven`) — 5 tools for browsing and
   applying free PBR assets. No API key required. Async `httpx` downloads, env-configurable
   cache dir, full `respx`-mocked test suite (15 tests).
-- **Hyper3D Rodin plugin** (`mcp-blender-bridge-hyper3d`) — 5 tools for AI text→3D
+- **Hyper3D Rodin plugin** (`blender-mcp-hyper3d`) — 5 tools for AI text→3D
   and image→3D generation. BYO `HYPER3D_API_KEY`; key never embedded in code. Exponential
   backoff polling (5 → 60s cap). ZIP/GLTF download + Blender import. (44 tests).
-- **Sketchfab plugin** (`mcp-blender-bridge-sketchfab`) — 4 tools for searching,
+- **Sketchfab plugin** (`blender-mcp-sketchfab`) — 4 tools for searching,
   previewing, and downloading 3D models from Sketchfab. Requires `SKETCHFAB_API_KEY`
   for downloads; search is keyless. ZIP extraction, GLTF cache, Blender import. (33 tests).
 - **Streamable HTTP transport** — `--transport http --host 0.0.0.0 --port 8765` flag.
-  Backed by `uvicorn` + `starlette`. `AuthMiddleware` enforces `BLENDER_BRIDGE_AUTH_TOKEN`
+  Backed by `uvicorn` + `starlette`. `AuthMiddleware` enforces `BLENDER_MCP_AUTH_TOKEN`
   (Bearer token) — server refuses to start in HTTP mode without the env var set.
 - **Blender addon**: `cmd_import_3d_model` command handler supporting GLB (GLTF),
   FBX, OBJ, and STL import. Handles Blender 3.x/4.x API differences.
@@ -42,7 +42,7 @@ versioning follows [SemVer](https://semver.org/).
   asset cache dir.
 
 ### Fixed
-- PolyHaven and Hyper3D `tools.py` used a direct `blender_bridge` import at module
+- PolyHaven and Hyper3D `tools.py` used a direct `blender_mcp` import at module
   level, causing `ModuleNotFoundError` when running plugin tests in isolation. Fixed
   via `TYPE_CHECKING` guard (import is now analysis-only; `Any` used at runtime).
 
@@ -57,10 +57,10 @@ versioning follows [SemVer](https://semver.org/).
 ### Added
 - `blender_render_image` — synchronous render with inline PNG preview, EEVEE / EEVEE_NEXT / CYCLES / WORKBENCH engines, override-and-restore semantics for engine and Cycles samples, configurable timeout up to 1 hour.
 - Wire-protocol versioning. `BRIDGE_PROTOCOL_VERSION = "1.0"` shipped on both server and addon. Mismatch returns a structured error from `blender_ping` with an upgrade hint.
-- JSON structured logging via `BLENDER_BRIDGE_LOG_FORMAT=json`. Pipe directly into log infrastructure; no `print()` anywhere.
-- Read-only mode via `BLENDER_BRIDGE_READ_ONLY=true`. All `destructiveHint: true` tools refuse to run; read tools work normally. Useful for shared / demo instances.
-- Persistent socket mode via `BLENDER_BRIDGE_PERSISTENT=true`. Reuses one TCP connection across all tool calls (saves the per-call handshake), serializes concurrent callers with `asyncio.Lock`, and reconnects automatically on broken pipe. Addon-side `_handle_client` now loops over newline-delimited commands per connection (backward-compatible with per-call clients).
-- Plugin discovery via standard `importlib.metadata` entry points on the `blender_bridge.plugins` group. Plugins are separately-installable packages that satisfy the `BlenderBridgePlugin` Protocol (`name`, `version`, `register(mcp, client, *, read_only)`). Bad imports and bad-shape plugins are logged and skipped — one bad plugin never brings the server down. New `mcp-blender-bridge --list-plugins` CLI flag enumerates installed plugins.
+- JSON structured logging via `BLENDER_MCP_LOG_FORMAT=json`. Pipe directly into log infrastructure; no `print()` anywhere.
+- Read-only mode via `BLENDER_MCP_READ_ONLY=true`. All `destructiveHint: true` tools refuse to run; read tools work normally. Useful for shared / demo instances.
+- Persistent socket mode via `BLENDER_MCP_PERSISTENT=true`. Reuses one TCP connection across all tool calls (saves the per-call handshake), serializes concurrent callers with `asyncio.Lock`, and reconnects automatically on broken pipe. Addon-side `_handle_client` now loops over newline-delimited commands per connection (backward-compatible with per-call clients).
+- Plugin discovery via standard `importlib.metadata` entry points on the `blender_mcp.plugins` group. Plugins are separately-installable packages that satisfy the `BlenderMCPPlugin` Protocol (`name`, `version`, `register(mcp, client, *, read_only)`). Bad imports and bad-shape plugins are logged and skipped — one bad plugin never brings the server down. New `blender-mcp --list-plugins` CLI flag enumerates installed plugins.
 - `Dockerfile` (multi-stage, uv-based) and `docker-compose.yml` for headless / render-farm deployments.
 - `docs/ARCHITECTURE.md` covering process model, transport, threading inside Blender, response shape, and extensibility.
 
@@ -90,7 +90,7 @@ versioning follows [SemVer](https://semver.org/).
 - 7 core tools: `blender_ping`, `blender_get_scene_info`, `blender_list_objects`,
   `blender_create_primitive`, `blender_transform_object`, `blender_delete_object`,
   `blender_execute_python`.
-- Blender addon (`blender_addon/mcp_blender_bridge.py`) with N-panel start/stop control.
+- Blender addon (`blender_addon/blender_mcp.py`) with N-panel start/stop control.
 - Pydantic v2 input validation, `extra="forbid"` on every tool input model.
 - Async TCP client (`asyncio.open_connection`).
 - All four MCP annotations (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`) on every tool.

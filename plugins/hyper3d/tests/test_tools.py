@@ -12,7 +12,7 @@ import httpx
 import pytest
 import respx
 
-from mcp_blender_bridge_hyper3d.schemas import (
+from blender_mcp_hyper3d.schemas import (
     Hyper3DGenerateImageParams,
     Hyper3DGenerateTextParams,
     Hyper3DImportParams,
@@ -34,7 +34,7 @@ def _make_tools(
     cache_dir: str | None = None,
 ) -> dict[str, Any]:
     """Build the tool functions by registering them against a mock FastMCP instance."""
-    from mcp_blender_bridge_hyper3d.tools import register_tools
+    from blender_mcp_hyper3d.tools import register_tools
 
     tools: dict[str, Any] = {}
 
@@ -51,7 +51,7 @@ def _make_tools(
     if api_key:
         env["HYPER3D_API_KEY"] = api_key
     if cache_dir:
-        env["BLENDER_BRIDGE_CACHE_DIR"] = cache_dir
+        env["BLENDER_MCP_CACHE_DIR"] = cache_dir
 
     with patch.dict(os.environ, env, clear=False):
         register_tools(FakeMCP(), client, read_only=read_only)  # type: ignore[arg-type]
@@ -228,7 +228,7 @@ class TestHyper3DPoll:
         tools = _make_tools(api_key="test-api-key")
 
         # Use a tiny max_wait and patch asyncio.sleep to avoid actual waiting
-        with patch("mcp_blender_bridge_hyper3d.tools.asyncio.sleep", new_callable=AsyncMock):
+        with patch("blender_mcp_hyper3d.tools.asyncio.sleep", new_callable=AsyncMock):
             result = await tools["hyper3d_poll"](
                 Hyper3DPollParams(task_uuid="task-timeout", max_wait=10)
             )
@@ -258,7 +258,7 @@ class TestHyper3DImport:
         tmp_path: Path,
     ) -> None:
         monkeypatch.setenv("HYPER3D_API_KEY", "test-api-key")
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
 
         task_id = "import-task-001"
         model_url = f"https://cdn.hyper3d.ai/{task_id}/model.glb"
@@ -284,7 +284,7 @@ class TestHyper3DImport:
             return_value={"status": "success", "imported_objects": ["RodinMesh"]}
         )
 
-        from mcp_blender_bridge_hyper3d.tools import register_tools
+        from blender_mcp_hyper3d.tools import register_tools
 
         tools: dict[str, Any] = {}
 
@@ -295,7 +295,7 @@ class TestHyper3DImport:
                     return fn
                 return decorator
 
-        with patch.dict(os.environ, {"HYPER3D_API_KEY": "test-api-key", "BLENDER_BRIDGE_CACHE_DIR": str(tmp_path)}):
+        with patch.dict(os.environ, {"HYPER3D_API_KEY": "test-api-key", "BLENDER_MCP_CACHE_DIR": str(tmp_path)}):
             register_tools(FakeMCP(), client_mock)  # type: ignore[arg-type]
 
         result = await tools["hyper3d_import"](

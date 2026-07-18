@@ -7,7 +7,7 @@ import pathlib
 
 
 def test_every_cmd_function_is_in_dispatch_table() -> None:
-    src = pathlib.Path("blender_addon/mcp_blender_bridge.py").read_text(encoding="utf-8")
+    src = pathlib.Path("blender_addon/blender_mcp.py").read_text(encoding="utf-8")
     tree = ast.parse(src)
 
     cmd_fns = {

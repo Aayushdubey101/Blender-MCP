@@ -8,10 +8,10 @@ resolution-markers = [
 
 [manifest]
 members = [
-    "mcp-blender-bridge",
-    "mcp-blender-bridge-hyper3d",
-    "mcp-blender-bridge-polyhaven",
-    "mcp-blender-bridge-sketchfab",
+    "blender-mcp",
+    "blender-mcp-hyper3d",
+    "blender-mcp-polyhaven",
+    "blender-mcp-sketchfab",
 ]
 
 [[package]]
@@ -630,7 +630,7 @@ cli = [
 ]
 
 [[package]]
-name = "mcp-blender-bridge"
+name = "blender-mcp"
 version = "0.4.1"
 source = { editable = "." }
 dependencies = [
@@ -650,9 +650,9 @@ dev = [
     { name = "ruff" },
 ]
 plugins = [
-    { name = "mcp-blender-bridge-hyper3d" },
-    { name = "mcp-blender-bridge-polyhaven" },
-    { name = "mcp-blender-bridge-sketchfab" },
+    { name = "blender-mcp-hyper3d" },
+    { name = "blender-mcp-polyhaven" },
+    { name = "blender-mcp-sketchfab" },
 ]
 
 [package.dev-dependencies]
@@ -665,9 +665,9 @@ requires-dist = [
     { name = "anyio", specifier = ">=4.3.0" },
     { name = "black", marker = "extra == 'dev'", specifier = ">=24.0.0" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.3.0" },
-    { name = "mcp-blender-bridge-hyper3d", marker = "extra == 'plugins'", editable = "plugins/hyper3d" },
-    { name = "mcp-blender-bridge-polyhaven", marker = "extra == 'plugins'", editable = "plugins/polyhaven" },
-    { name = "mcp-blender-bridge-sketchfab", marker = "extra == 'plugins'", editable = "plugins/sketchfab" },
+    { name = "blender-mcp-hyper3d", marker = "extra == 'plugins'", editable = "plugins/hyper3d" },
+    { name = "blender-mcp-polyhaven", marker = "extra == 'plugins'", editable = "plugins/polyhaven" },
+    { name = "blender-mcp-sketchfab", marker = "extra == 'plugins'", editable = "plugins/sketchfab" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.9.0" },
     { name = "pydantic", specifier = ">=2.6.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
@@ -682,7 +682,7 @@ provides-extras = ["dev", "plugins"]
 dev = [{ name = "pytest-cov", specifier = ">=7.1.0" }]
 
 [[package]]
-name = "mcp-blender-bridge-hyper3d"
+name = "blender-mcp-hyper3d"
 version = "0.1.0"
 source = { editable = "plugins/hyper3d" }
 dependencies = [
@@ -718,7 +718,7 @@ provides-extras = ["dev"]
 dev = [{ name = "pytest-cov", specifier = ">=7.1.0" }]
 
 [[package]]
-name = "mcp-blender-bridge-polyhaven"
+name = "blender-mcp-polyhaven"
 version = "0.1.0"
 source = { editable = "plugins/polyhaven" }
 dependencies = [
@@ -754,7 +754,7 @@ provides-extras = ["dev"]
 dev = [{ name = "pytest-cov", specifier = ">=7.1.0" }]
 
 [[package]]
-name = "mcp-blender-bridge-sketchfab"
+name = "blender-mcp-sketchfab"
 version = "0.1.0"
 source = { editable = "plugins/sketchfab" }
 dependencies = [

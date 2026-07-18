@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from blender_bridge.client import (
+from blender_mcp.client import (
     BRIDGE_PROTOCOL_VERSION,
     BlenderClient,
     BlenderConnectionError,
@@ -156,7 +156,7 @@ class TestBlenderClientPing:
         }
         reader, writer = _make_connection(response)
         with patch("asyncio.open_connection", new=AsyncMock(return_value=(reader, writer))):
-            with caplog.at_level(logging.WARNING, logger="blender_bridge.client"):
+            with caplog.at_level(logging.WARNING, logger="blender_mcp.client"):
                 result = await self.client.ping()
         assert result is True
         assert "Protocol version mismatch" in caplog.text
@@ -170,7 +170,7 @@ class TestBlenderClientPing:
         }
         reader, writer = _make_connection(response)
         with patch("asyncio.open_connection", new=AsyncMock(return_value=(reader, writer))):
-            with caplog.at_level(logging.WARNING, logger="blender_bridge.client"):
+            with caplog.at_level(logging.WARNING, logger="blender_mcp.client"):
                 await self.client.ping()
         assert "mismatch" not in caplog.text
 

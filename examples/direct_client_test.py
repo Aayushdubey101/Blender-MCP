@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import asyncio
 
-from blender_bridge.client import BlenderClient, BlenderConnectionError
+from blender_mcp.client import BlenderClient, BlenderConnectionError
 
 
 async def main() -> None:

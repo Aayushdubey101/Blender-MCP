@@ -6,8 +6,8 @@ import json
 
 import pytest
 
-from blender_bridge.client import BlenderConnectionError
-from blender_bridge.utils import (
+from blender_mcp.client import BlenderConnectionError
+from blender_mcp.utils import (
     format_error,
     format_success,
     handle_blender_error,

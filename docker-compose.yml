@@ -1,15 +1,15 @@
 services:
-  mcp-blender-bridge:
+  blender-mcp:
     build: .
-    image: mcp-blender-bridge:latest
+    image: blender-mcp:latest
     environment:
       # Point at the Blender addon running on the host machine.
       # On Linux replace with the actual host IP (172.17.0.1 for default bridge).
-      BLENDER_BRIDGE_HOST: host.docker.internal
-      BLENDER_BRIDGE_PORT: ${BLENDER_BRIDGE_PORT:-9876}
-      BLENDER_BRIDGE_LOG_FORMAT: ${BLENDER_BRIDGE_LOG_FORMAT:-json}
-      BLENDER_BRIDGE_LOG_LEVEL: ${BLENDER_BRIDGE_LOG_LEVEL:-INFO}
-      BLENDER_BRIDGE_READ_ONLY: ${BLENDER_BRIDGE_READ_ONLY:-false}
+      BLENDER_MCP_HOST: host.docker.internal
+      BLENDER_MCP_PORT: ${BLENDER_MCP_PORT:-9876}
+      BLENDER_MCP_LOG_FORMAT: ${BLENDER_MCP_LOG_FORMAT:-json}
+      BLENDER_MCP_LOG_LEVEL: ${BLENDER_MCP_LOG_LEVEL:-INFO}
+      BLENDER_MCP_READ_ONLY: ${BLENDER_MCP_READ_ONLY:-false}
     # MCP uses stdio transport — keep stdin open so the client can drive it.
     stdin_open: true
     tty: false

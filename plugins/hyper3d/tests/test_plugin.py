@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from mcp_blender_bridge_hyper3d.plugin import Hyper3DPlugin
+from blender_mcp_hyper3d.plugin import Hyper3DPlugin
 
 
 class TestHyper3DPlugin:
@@ -16,7 +16,7 @@ class TestHyper3DPlugin:
 
     def test_register_delegates_to_register_tools(self, monkeypatch) -> None:  # type: ignore[no-untyped-def]
         """register() should call register_tools without raising, even without an API key."""
-        import mcp_blender_bridge_hyper3d.plugin as plugin_module
+        import blender_mcp_hyper3d.plugin as plugin_module
 
         called_with: list[tuple] = []
 
@@ -24,7 +24,7 @@ class TestHyper3DPlugin:
             called_with.append((mcp, client, read_only))
 
         monkeypatch.setattr(
-            "mcp_blender_bridge_hyper3d.tools.register_tools",
+            "blender_mcp_hyper3d.tools.register_tools",
             fake_register_tools,
         )
 
@@ -38,6 +38,6 @@ class TestHyper3DPlugin:
         assert ro is True
 
     def test_module_exports_plugin_singleton(self) -> None:
-        import mcp_blender_bridge_hyper3d as pkg
+        import blender_mcp_hyper3d as pkg
 
         assert isinstance(pkg.plugin, Hyper3DPlugin)

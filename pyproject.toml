@@ -1,5 +1,5 @@
 [project]
-name = "mcp-blender-bridge"
+name = "blender-mcp"
 version = "0.4.1"
 description = "Production-grade Blender MCP server — zero telemetry, Pydantic-validated, async-native, plugin-extensible"
 readme = "README.md"
@@ -37,33 +37,33 @@ dev = [
     "black>=24.0.0",
 ]
 plugins = [
-    "mcp-blender-bridge-polyhaven",
-    "mcp-blender-bridge-hyper3d",
-    "mcp-blender-bridge-sketchfab",
+    "blender-mcp-polyhaven",
+    "blender-mcp-hyper3d",
+    "blender-mcp-sketchfab",
 ]
 
 [project.scripts]
-mcp-blender-bridge = "blender_bridge.server:main"
+blender-mcp = "blender_mcp.server:main"
 
 [tool.uv.workspace]
 members = ["plugins/polyhaven", "plugins/hyper3d", "plugins/sketchfab"]
 
 [tool.uv.sources]
-mcp-blender-bridge-polyhaven = { workspace = true }
-mcp-blender-bridge-hyper3d = { workspace = true }
-mcp-blender-bridge-sketchfab = { workspace = true }
+blender-mcp-polyhaven = { workspace = true }
+blender-mcp-hyper3d = { workspace = true }
+blender-mcp-sketchfab = { workspace = true }
 
 [project.urls]
-Homepage = "https://github.com/Aayushdubey101/MCP-HUB"
-Repository = "https://github.com/Aayushdubey101/MCP-HUB"
-Issues = "https://github.com/Aayushdubey101/MCP-HUB/issues"
+Homepage = "https://github.com/Aayushdubey101/Blender-MCP"
+Repository = "https://github.com/Aayushdubey101/Blender-MCP"
+Issues = "https://github.com/Aayushdubey101/Blender-MCP/issues"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/blender_bridge"]
+packages = ["src/blender_mcp"]
 
 [tool.ruff]
 line-length = 100

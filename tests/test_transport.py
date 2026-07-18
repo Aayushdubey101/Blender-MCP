@@ -7,7 +7,7 @@ import pytest
 from starlette.responses import JSONResponse
 from starlette.testclient import TestClient
 
-from blender_bridge.server import AuthMiddleware, main
+from blender_mcp.server import AuthMiddleware, main
 
 # ---------------------------------------------------------------------------
 # AuthMiddleware unit tests
@@ -62,21 +62,21 @@ def test_auth_middleware_valid_token():
 # ---------------------------------------------------------------------------
 
 
-@patch("sys.argv", ["mcp-blender-bridge", "--transport", "http"])
+@patch("sys.argv", ["blender-mcp", "--transport", "http"])
 def test_main_http_missing_token_exits():
-    """HTTP mode exits with code 1 when BLENDER_BRIDGE_AUTH_TOKEN is unset."""
-    env = {k: v for k, v in os.environ.items() if k != "BLENDER_BRIDGE_AUTH_TOKEN"}
+    """HTTP mode exits with code 1 when BLENDER_MCP_AUTH_TOKEN is unset."""
+    env = {k: v for k, v in os.environ.items() if k != "BLENDER_MCP_AUTH_TOKEN"}
     with patch.dict(os.environ, env, clear=True):
         with pytest.raises(SystemExit) as exc:
             main()
         assert exc.value.code == 1
 
 
-@patch("sys.argv", ["mcp-blender-bridge", "--transport", "http", "--port", "1234"])
-@patch("blender_bridge.server.uvicorn.run")
+@patch("sys.argv", ["blender-mcp", "--transport", "http", "--port", "1234"])
+@patch("blender_mcp.server.uvicorn.run")
 def test_main_http_valid_token_runs_uvicorn(mock_uvicorn_run):
     """uvicorn starts on the safe default host/port when a token is present."""
-    with patch.dict(os.environ, {"BLENDER_BRIDGE_AUTH_TOKEN": "mytoken"}):
+    with patch.dict(os.environ, {"BLENDER_MCP_AUTH_TOKEN": "mytoken"}):
         main()
     mock_uvicorn_run.assert_called_once()
     _, kwargs = mock_uvicorn_run.call_args
@@ -87,12 +87,12 @@ def test_main_http_valid_token_runs_uvicorn(mock_uvicorn_run):
 
 @patch(
     "sys.argv",
-    ["mcp-blender-bridge", "--transport", "http", "--host", "0.0.0.0", "--port", "1234"],
+    ["blender-mcp", "--transport", "http", "--host", "0.0.0.0", "--port", "1234"],
 )
-@patch("blender_bridge.server.uvicorn.run")
+@patch("blender_mcp.server.uvicorn.run")
 def test_main_http_explicit_host_honoured(mock_uvicorn_run):
     """Explicit --host 0.0.0.0 is respected (opt-in network exposure)."""
-    with patch.dict(os.environ, {"BLENDER_BRIDGE_AUTH_TOKEN": "mytoken"}):
+    with patch.dict(os.environ, {"BLENDER_MCP_AUTH_TOKEN": "mytoken"}):
         main()
     _, kwargs = mock_uvicorn_run.call_args
     assert kwargs["host"] == "0.0.0.0"
@@ -110,11 +110,11 @@ def test_auth_middleware_constant_time_compare():
     assert _secrets.compare_digest(app._token_bytes, b"alphabravX") is False
 
 
-@patch("sys.argv", ["mcp-blender-bridge", "--transport", "http", "--port", "1234"])
-@patch("blender_bridge.server.uvicorn.run")
+@patch("sys.argv", ["blender-mcp", "--transport", "http", "--port", "1234"])
+@patch("blender_mcp.server.uvicorn.run")
 def test_main_http_app_has_auth_middleware(mock_uvicorn_run):
     """The ASGI app passed to uvicorn includes AuthMiddleware."""
-    with patch.dict(os.environ, {"BLENDER_BRIDGE_AUTH_TOKEN": "mytoken"}):
+    with patch.dict(os.environ, {"BLENDER_MCP_AUTH_TOKEN": "mytoken"}):
         main()
     args, _ = mock_uvicorn_run.call_args
     app = args[0]
@@ -122,24 +122,24 @@ def test_main_http_app_has_auth_middleware(mock_uvicorn_run):
     assert AuthMiddleware in middleware_types
 
 
-@patch("sys.argv", ["mcp-blender-bridge", "--transport", "sse"])
-@patch("blender_bridge.server.mcp.run")
+@patch("sys.argv", ["blender-mcp", "--transport", "sse"])
+@patch("blender_mcp.server.mcp.run")
 def test_main_sse_delegates_to_fastmcp(mock_mcp_run):
     """SSE transport delegates to FastMCP with transport='sse'."""
     main()
     mock_mcp_run.assert_called_once_with(transport="sse")
 
 
-@patch("sys.argv", ["mcp-blender-bridge"])
-@patch("blender_bridge.server.mcp.run")
+@patch("sys.argv", ["blender-mcp"])
+@patch("blender_mcp.server.mcp.run")
 def test_main_stdio_default(mock_mcp_run):
     """Default (no --transport) uses stdio."""
     main()
     mock_mcp_run.assert_called_once_with(transport="stdio")
 
 
-@patch("sys.argv", ["mcp-blender-bridge", "--list-plugins"])
-@patch("blender_bridge.server.mcp.run")
+@patch("sys.argv", ["blender-mcp", "--list-plugins"])
+@patch("blender_mcp.server.mcp.run")
 def test_main_list_plugins_does_not_start_server(mock_mcp_run, capsys):
     """--list-plugins prints the plugin list and does not start the server."""
     main()

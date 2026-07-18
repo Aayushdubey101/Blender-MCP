@@ -1,4 +1,4 @@
-"""Pydantic input schemas for MCP Blender Bridge tools.
+"""Pydantic input schemas for Blender MCP tools.
 
 All tools use Pydantic models for input validation. This keeps validation
 declarative and lets FastMCP auto-generate accurate input schemas.

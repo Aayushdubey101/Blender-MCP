@@ -3,7 +3,7 @@
 Shared across all plugins. Provides a deterministic, content-addressable
 cache directory structure:
 
-    <BLENDER_BRIDGE_CACHE_DIR>/
+    <BLENDER_MCP_CACHE_DIR>/
         sha256/
             <sha256-hex>/       ← one entry per unique content hash
                 <filename>
@@ -18,10 +18,10 @@ the event loop.
 
 Usage (plugin code example)::
 
-    from blender_bridge.asset_cache import get_plugin_cache_dir, sha256_cache_path
+    from blender_mcp.asset_cache import get_plugin_cache_dir, sha256_cache_path
 
     cache_dir = get_plugin_cache_dir("hyper3d", "task-uuid-001")
-    # → ~/.cache/mcp-blender-bridge/assets/hyper3d/task-uuid-001/
+    # → ~/.cache/blender-mcp/assets/hyper3d/task-uuid-001/
 
     sha_path = sha256_cache_path(data_bytes, filename="model.glb")
     if sha_path is None:
@@ -42,14 +42,14 @@ from typing import Optional
 logger = logging.getLogger(__name__)
 
 _DEFAULT_CACHE_BASE = str(
-    Path.home() / ".cache" / "mcp-blender-bridge" / "assets"
+    Path.home() / ".cache" / "blender-mcp" / "assets"
 )
 _MAX_AGE_DAYS = 30  # default: prune entries older than this
 
 
 def _cache_base() -> Path:
-    """Return the root cache directory, honouring BLENDER_BRIDGE_CACHE_DIR."""
-    return Path(os.environ.get("BLENDER_BRIDGE_CACHE_DIR", _DEFAULT_CACHE_BASE))
+    """Return the root cache directory, honouring BLENDER_MCP_CACHE_DIR."""
+    return Path(os.environ.get("BLENDER_MCP_CACHE_DIR", _DEFAULT_CACHE_BASE))
 
 
 def get_plugin_cache_dir(plugin_name: str, uid: str) -> Path:

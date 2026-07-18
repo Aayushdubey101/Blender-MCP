@@ -21,7 +21,7 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 
 if TYPE_CHECKING:
-    from blender_bridge.client import BlenderClient
+    from blender_mcp.client import BlenderClient
 
 from .schemas import (
     Hyper3DGenerateImageParams,
@@ -51,8 +51,8 @@ def _get_api_key() -> str | None:
 def _get_cache_dir(task_uuid: str) -> Path:
     """Return (and create) the cache directory for a given task UUID."""
     base = os.environ.get(
-        "BLENDER_BRIDGE_CACHE_DIR",
-        str(Path.home() / ".cache" / "mcp-blender-bridge" / "assets" / "hyper3d"),
+        "BLENDER_MCP_CACHE_DIR",
+        str(Path.home() / ".cache" / "blender-mcp" / "assets" / "hyper3d"),
     )
     path = Path(base) / task_uuid
     path.mkdir(parents=True, exist_ok=True)

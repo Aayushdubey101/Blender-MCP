@@ -1,5 +1,5 @@
 import pytest
-from mcp_blender_bridge_polyhaven.plugin import PolyHavenPlugin
+from blender_mcp_polyhaven.plugin import PolyHavenPlugin
 
 class MockMCP:
     def __init__(self):

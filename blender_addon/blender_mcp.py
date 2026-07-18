@@ -1,4 +1,4 @@
-"""MCP-Blender-Bridge addon for Blender.
+"""Blender MCP addon for Blender.
 
 Install this addon inside Blender (Edit > Preferences > Add-ons > Install...)
 and start the bridge server from the 3D Viewport's N-panel ("MCP" tab).
@@ -12,7 +12,7 @@ named functions rather than split across modules.
 """
 
 bl_info = {
-    "name": "MCP Blender Bridge",
+    "name": "Blender MCP",
     "author": "Aayush Dubey",
     "version": (0, 4, 1),
     "blender": (3, 0, 0),
@@ -818,7 +818,7 @@ class MCP_OT_StopServer(bpy.types.Operator):
 
 
 class MCP_PT_Panel(bpy.types.Panel):
-    bl_label = f"MCP Blender Bridge v{_VERSION}"
+    bl_label = f"Blender MCP v{_VERSION}"
     bl_idname = "MCP_PT_panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"

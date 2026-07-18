@@ -13,7 +13,7 @@ Two modes:
   on broken pipe / reset, and serializes concurrent callers with a lock.
 
 Mode is selected via ``BlenderClient(persistent=True)`` or the
-``BLENDER_BRIDGE_PERSISTENT`` environment variable read in ``server.py``.
+``BLENDER_MCP_PERSISTENT`` environment variable read in ``server.py``.
 """
 
 from __future__ import annotations
@@ -93,7 +93,7 @@ class BlenderClient:
             self._writer = None
             raise BlenderConnectionError(
                 f"Could not connect to Blender at {self.host}:{self.port}. "
-                f"Make sure Blender is running and the MCP-Blender-Bridge addon is "
+                f"Make sure Blender is running and the Blender MCP addon is "
                 f"enabled and started. Original error: {e}"
             ) from e
 
@@ -151,7 +151,7 @@ class BlenderClient:
         except (OSError, asyncio.TimeoutError) as e:
             raise BlenderConnectionError(
                 f"Could not connect to Blender at {self.host}:{self.port}. "
-                f"Make sure Blender is running and the MCP-Blender-Bridge addon is "
+                f"Make sure Blender is running and the Blender MCP addon is "
                 f"enabled and started. Original error: {e}"
             ) from e
 
@@ -253,7 +253,7 @@ class BlenderClient:
             if addon_protocol and addon_protocol != BRIDGE_PROTOCOL_VERSION:
                 logger.warning(
                     "Protocol version mismatch: server=%r addon=%r — "
-                    "update blender_addon/mcp_blender_bridge.py to match.",
+                    "update blender_addon/blender_mcp.py to match.",
                     BRIDGE_PROTOCOL_VERSION,
                     addon_protocol,
                 )

@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from mcp_blender_bridge_hyper3d.schemas import (
+from blender_mcp_hyper3d.schemas import (
     Hyper3DGenerateImageParams,
     Hyper3DGenerateTextParams,
     Hyper3DImportParams,

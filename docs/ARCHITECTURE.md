@@ -1,4 +1,4 @@
-# Architecture — MCP-Blender-Bridge
+# Architecture — Blender MCP
 
 > Internal design reference. Covers process topology, wire protocol, tool
 > organisation, and the decisions that differentiate us from `ahujasid/blender-mcp`.
@@ -14,8 +14,8 @@
                  │  stdio (MCP protocol, JSON-RPC 2.0)
                  ▼
 ┌─────────────────────────────────┐
-│  mcp-blender-bridge             │  ← this package
-│  src/blender_bridge/server.py   │
+│  blender-mcp             │  ← this package
+│  src/blender_mcp/server.py   │
 │  FastMCP + async tool handlers  │
 └────────────────┬────────────────┘
                  │  TCP 127.0.0.1:9876
@@ -24,7 +24,7 @@
 ┌─────────────────────────────────┐
 │  Blender 3.0+                   │
 │  blender_addon/                 │
-│  mcp_blender_bridge.py          │
+│  blender_mcp.py          │
 │  (daemon TCP thread + bpy ops)  │
 └─────────────────────────────────┘
 ```
@@ -37,7 +37,7 @@ Claude via stdio; the Blender addon listens on TCP inside Blender's process.
 ## Package layout
 
 ```
-src/blender_bridge/
+src/blender_mcp/
 ├── server.py              # Entry point — env-var config, registers tool groups, mcp.run()
 ├── client.py              # BlenderClient — async TCP, per-call and persistent modes
 ├── schemas.py             # All Pydantic input models (single source of truth)
@@ -54,12 +54,12 @@ src/blender_bridge/
     └── code.py               # 1 escape-hatch tool (execute_python)
 
 blender_addon/
-└── mcp_blender_bridge.py   # Single-file Blender addon (drag-and-drop install)
+└── blender_mcp.py   # Single-file Blender addon (drag-and-drop install)
 
 plugins/
-├── polyhaven/              # mcp-blender-bridge-polyhaven (5 tools, no key needed)
-├── hyper3d/               # mcp-blender-bridge-hyper3d (5 tools, HYPER3D_API_KEY)
-└── sketchfab/             # mcp-blender-bridge-sketchfab (4 tools, SKETCHFAB_API_KEY)
+├── polyhaven/              # blender-mcp-polyhaven (5 tools, no key needed)
+├── hyper3d/               # blender-mcp-hyper3d (5 tools, HYPER3D_API_KEY)
+└── sketchfab/             # blender-mcp-sketchfab (4 tools, SKETCHFAB_API_KEY)
 
 tests/                      # 204 core tests
 ├── test_schemas.py         # Schema validation (no Blender required)
@@ -232,13 +232,13 @@ usage data (including prompts and code) to Supabase by default. Their telemetry
 can be disabled via `DISABLE_TELEMETRY=true` but is opt-out, not opt-in.
 
 Studios under NDA, government contractors, and regulated industries cannot use
-default-on telemetry. MCP-Blender-Bridge has nothing to disable.
+default-on telemetry. Blender MCP has nothing to disable.
 
 ---
 
 ## Comparison table
 
-| Dimension | `ahujasid/blender-mcp` v1.5.5 | `MCP-Blender-Bridge` v0.3.1 |
+| Dimension | `ahujasid/blender-mcp` v1.5.5 | `Blender MCP` v0.3.1 |
 |-----------|-------------------------------|------------------------------|
 | **Telemetry** | Default-on (Supabase) | Zero — no code exists |
 | **Input validation** | None (raw kwargs) | Pydantic v2, `extra="forbid"` |
@@ -257,22 +257,22 @@ default-on telemetry. MCP-Blender-Bridge has nothing to disable.
 | **Viewport screenshot** | Yes | Yes (inline `Image` content) |
 | **Object inspection** | Yes | Yes (mesh/light/camera type-specific) |
 | **Render submission** | No | `blender_render_image` (EEVEE/CYCLES, inline preview) |
-| **Read-only mode** | No | `BLENDER_BRIDGE_READ_ONLY=true` disables all writes |
-| **Structured logging** | No | `BLENDER_BRIDGE_LOG_FORMAT=json` |
+| **Read-only mode** | No | `BLENDER_MCP_READ_ONLY=true` disables all writes |
+| **Structured logging** | No | `BLENDER_MCP_LOG_FORMAT=json` |
 | **Protocol versioning** | No | `BRIDGE_PROTOCOL_VERSION="1.0"` — mismatch warns on ping |
 | **Plugin architecture** | Baked-in integrations | Entry-point system — 3 plugins shipped |
 | **Asset cache** | None | SHA-256 content-addressable, stale pruning on startup |
 | **HTTP transport** | stdio only | `--transport http` with Bearer auth |
 | **Headless Blender** | None | `--launch-blender` auto-starts `blender --background` |
-| **PolyHaven** | Baked-in | `pip install mcp-blender-bridge-polyhaven` (5 tools) |
-| **Hyper3D/Rodin** | Baked-in (free trial key) | `pip install mcp-blender-bridge-hyper3d` (BYO key) |
-| **Sketchfab** | None | `pip install mcp-blender-bridge-sketchfab` (4 tools) |
+| **PolyHaven** | Baked-in | `pip install blender-mcp-polyhaven` (5 tools) |
+| **Hyper3D/Rodin** | Baked-in (free trial key) | `pip install blender-mcp-hyper3d` (BYO key) |
+| **Sketchfab** | None | `pip install blender-mcp-sketchfab` (4 tools) |
 
 ---
 
 ## Read-only mode
 
-Set `BLENDER_BRIDGE_READ_ONLY=true` (or `1` or `yes`) to disable all destructive
+Set `BLENDER_MCP_READ_ONLY=true` (or `1` or `yes`) to disable all destructive
 tools at startup. The server still registers them — they return an actionable error
 rather than being hidden — so tool discovery works normally.
 
@@ -290,7 +290,7 @@ shared Blender instances where writes should be gated.
 ## Protocol versioning
 
 `BRIDGE_PROTOCOL_VERSION = "1.0"` is defined in both `client.py` and
-`blender_addon/mcp_blender_bridge.py`. On `blender_ping`, the addon returns the
+`blender_addon/blender_mcp.py`. On `blender_ping`, the addon returns the
 version it was built with:
 
 ```json
@@ -307,14 +307,14 @@ directing the user to update the addon. Old addons that predate versioning retur
 
 | Variable | Default | Effect |
 |----------|---------|--------|
-| `BLENDER_BRIDGE_HOST` | `127.0.0.1` | Blender addon TCP address |
-| `BLENDER_BRIDGE_PORT` | `9876` | Blender addon TCP port |
-| `BLENDER_BRIDGE_LOG_LEVEL` | `INFO` | Python logging level (`DEBUG`/`INFO`/`WARNING`/`ERROR`) |
-| `BLENDER_BRIDGE_LOG_FORMAT` | `text` | Set to `json` for structured log output (log aggregators, CI) |
-| `BLENDER_BRIDGE_READ_ONLY` | `false` | Set to `true`/`1`/`yes` — disables all destructive tools |
-| `BLENDER_BRIDGE_PERSISTENT` | `false` | Reuse a single TCP connection across all calls (faster, reconnects on drop) |
-| `BLENDER_BRIDGE_AUTH_TOKEN` | — | **Required** when using `--transport http`. Bearer token for all requests. |
-| `BLENDER_BRIDGE_CACHE_DIR` | `~/.cache/mcp-blender-bridge/assets` | Shared asset cache for all plugins. |
+| `BLENDER_MCP_HOST` | `127.0.0.1` | Blender addon TCP address |
+| `BLENDER_MCP_PORT` | `9876` | Blender addon TCP port |
+| `BLENDER_MCP_LOG_LEVEL` | `INFO` | Python logging level (`DEBUG`/`INFO`/`WARNING`/`ERROR`) |
+| `BLENDER_MCP_LOG_FORMAT` | `text` | Set to `json` for structured log output (log aggregators, CI) |
+| `BLENDER_MCP_READ_ONLY` | `false` | Set to `true`/`1`/`yes` — disables all destructive tools |
+| `BLENDER_MCP_PERSISTENT` | `false` | Reuse a single TCP connection across all calls (faster, reconnects on drop) |
+| `BLENDER_MCP_AUTH_TOKEN` | — | **Required** when using `--transport http`. Bearer token for all requests. |
+| `BLENDER_MCP_CACHE_DIR` | `~/.cache/blender-mcp/assets` | Shared asset cache for all plugins. |
 | `BLENDER_LAUNCH_TIMEOUT` | `30` | Seconds to wait for Blender addon to open port when `--launch-blender` is used. |
 | `BLENDER_PATH` | — | Override Blender executable location for `--launch-blender`. |
 | `HYPER3D_API_KEY` | — | API key for Hyper3D Rodin plugin (BYO, never embedded). |
@@ -324,14 +324,14 @@ directing the user to update the addon. Old addons that predate versioning retur
 
 ## Adding a new tool (contributor guide)
 
-1. **Add the input schema** to `src/blender_bridge/schemas.py` as a
+1. **Add the input schema** to `src/blender_mcp/schemas.py` as a
    `StrictModel` subclass with field-level constraints.
 
 2. **Add the tool function** to the appropriate `tools/*.py` module inside its
    `register()` function. Use `async def`, return `format_success()` or
    `format_error()`, annotate all 4 hints.
 
-3. **Add the command handler** to `blender_addon/mcp_blender_bridge.py` and
+3. **Add the command handler** to `blender_addon/blender_mcp.py` and
    register it in `COMMAND_HANDLERS`.
 
 4. **Add at least one test** to `tests/test_schemas.py` covering the new

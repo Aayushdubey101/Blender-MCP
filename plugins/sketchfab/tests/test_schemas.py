@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from mcp_blender_bridge_sketchfab.schemas import (
+from blender_mcp_sketchfab.schemas import (
     SketchfabDownloadParams,
     SketchfabPreviewParams,
     SketchfabSearchParams,

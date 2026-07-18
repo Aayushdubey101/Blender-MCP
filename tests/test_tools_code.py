@@ -7,9 +7,9 @@ from unittest.mock import AsyncMock
 
 from mcp.server.fastmcp import FastMCP
 
-from blender_bridge.client import BlenderClient, BlenderConnectionError
-from blender_bridge.schemas import ExecutePythonInput
-from blender_bridge.tools import code as code_tools
+from blender_mcp.client import BlenderClient, BlenderConnectionError
+from blender_mcp.schemas import ExecutePythonInput
+from blender_mcp.tools import code as code_tools
 
 
 def _make_mcp(read_only: bool = False):

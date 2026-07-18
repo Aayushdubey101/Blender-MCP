@@ -4,7 +4,7 @@ from __future__ import annotations
 
 
 class SketchfabPlugin:
-    """MCP-Blender-Bridge plugin for Sketchfab 3D model search and download."""
+    """Blender MCP plugin for Sketchfab 3D model search and download."""
 
     name = "sketchfab"
     version = "0.1.0"

@@ -1,6 +1,6 @@
-# mcp-blender-bridge-hyper3d
+# blender-mcp-hyper3d
 
-Hyper3D Rodin AI 3D generation plugin for [MCP-Blender-Bridge](https://github.com/Aayushdubey101/MCP-HUB).
+Hyper3D Rodin AI 3D generation plugin for [Blender MCP](https://github.com/Aayushdubey101/Blender-MCP).
 
 Generate 3D models from text prompts or reference images using the [Hyper3D Rodin](https://hyper3d.ai) API and import them directly into Blender via Claude.
 
@@ -8,10 +8,10 @@ Generate 3D models from text prompts or reference images using the [Hyper3D Rodi
 
 ## Installation
 
-Install alongside `mcp-blender-bridge` in the same virtualenv:
+Install alongside `blender-mcp` in the same virtualenv:
 
 ```bash
-pip install mcp-blender-bridge-hyper3d
+pip install blender-mcp-hyper3d
 ```
 
 Set your API key (**never hardcoded** — always via env var):
@@ -29,7 +29,7 @@ Get a key by signing up at **https://hyper3d.ai**.
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `HYPER3D_API_KEY` | Yes (at call time) | — | Bearer token for the Rodin API |
-| `BLENDER_BRIDGE_CACHE_DIR` | No | `~/.cache/mcp-blender-bridge/assets/hyper3d` | Local cache root for downloaded models |
+| `BLENDER_MCP_CACHE_DIR` | No | `~/.cache/blender-mcp/assets/hyper3d` | Local cache root for downloaded models |
 
 ---
 

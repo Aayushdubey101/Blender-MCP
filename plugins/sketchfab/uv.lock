@@ -489,7 +489,7 @@ cli = [
 ]
 
 [[package]]
-name = "mcp-blender-bridge-sketchfab"
+name = "blender-mcp-sketchfab"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

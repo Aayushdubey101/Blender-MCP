@@ -5,9 +5,9 @@ Provides helpers to locate a Blender executable and launch it in
 
 Usage::
 
-    uv run mcp-blender-bridge --launch-blender
-    uv run mcp-blender-bridge --launch-blender --blender-path /opt/blender/blender
-    uv run mcp-blender-bridge --launch-blender --blender-addon-port 9876
+    uv run blender-mcp --launch-blender
+    uv run blender-mcp --launch-blender --blender-path /opt/blender/blender
+    uv run blender-mcp --launch-blender --blender-addon-port 9876
 
 The server will:
 1. Discover the Blender executable (from ``--blender-path``, then
@@ -100,21 +100,21 @@ def find_blender(explicit_path: Optional[str] = None) -> Path:
 
 def _addon_path() -> Path:
     """Return the path to the bundled Blender addon script."""
-    # The addon lives at mcp-blender-bridge/blender_addon/mcp_blender_bridge.py
+    # The addon lives at blender-mcp/blender_addon/blender_mcp.py
     # When installed as a package the source root is not guaranteed to be on disk,
     # but for local `uv run` / editable installs it will be.
     here = Path(__file__).parent
-    candidate = here.parent.parent / "blender_addon" / "mcp_blender_bridge.py"
+    candidate = here.parent.parent / "blender_addon" / "blender_mcp.py"
     if candidate.exists():
         return candidate
 
     # Fallback: look relative to CWD (useful when running directly from repo root)
-    cwd_candidate = Path.cwd() / "blender_addon" / "mcp_blender_bridge.py"
+    cwd_candidate = Path.cwd() / "blender_addon" / "blender_mcp.py"
     if cwd_candidate.exists():
         return cwd_candidate
 
     raise FileNotFoundError(
-        f"Could not find blender_addon/mcp_blender_bridge.py "
+        f"Could not find blender_addon/blender_mcp.py "
         f"(searched {candidate} and {cwd_candidate})"
     )
 
@@ -132,11 +132,11 @@ def _make_bootstrap_script(addon_path: Path, bridge_port: int) -> str:
             sys.path.insert(0, str(__import__("pathlib").Path(addon_path).parent))
 
         bpy.ops.preferences.addon_install(filepath=addon_path, overwrite=True)
-        bpy.ops.preferences.addon_enable(module="mcp_blender_bridge")
+        bpy.ops.preferences.addon_enable(module="blender_mcp")
 
         # Configure the port if the addon supports it
         try:
-            prefs = bpy.context.preferences.addons["mcp_blender_bridge"].preferences
+            prefs = bpy.context.preferences.addons["blender_mcp"].preferences
             prefs.port = {bridge_port}
         except Exception:
             pass

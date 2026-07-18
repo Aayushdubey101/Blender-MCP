@@ -27,15 +27,15 @@ def handle_blender_error(exc: Exception) -> str:
         return format_error(
             f"Cannot reach Blender. {exc} "
             "Next steps: (1) Open Blender, (2) install and enable the "
-            "'mcp_blender_bridge' addon from the blender_addon/ folder, "
+            "'blender_mcp' addon from the blender_addon/ folder, "
             "(3) start the bridge server from the addon's 3D View N-panel."
         )
     return format_error(f"Unexpected error ({type(exc).__name__}): {exc}")
 
 
 READ_ONLY_ERROR: str = format_error(
-    "Server is in read-only mode (BLENDER_BRIDGE_READ_ONLY=true). "
-    "This operation is disabled. Set BLENDER_BRIDGE_READ_ONLY=false to enable writes."
+    "Server is in read-only mode (BLENDER_MCP_READ_ONLY=true). "
+    "This operation is disabled. Set BLENDER_MCP_READ_ONLY=false to enable writes."
 )
 
 

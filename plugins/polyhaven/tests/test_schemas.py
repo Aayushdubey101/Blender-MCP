@@ -1,6 +1,6 @@
 import pytest
 from pydantic import ValidationError
-from mcp_blender_bridge_polyhaven.schemas import (
+from blender_mcp_polyhaven.schemas import (
     PolyHavenStatusParams,
     PolyHavenCategoriesParams,
     PolyHavenSearchParams,

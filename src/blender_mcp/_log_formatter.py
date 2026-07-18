@@ -9,7 +9,7 @@ import logging
 class JsonFormatter(logging.Formatter):
     """Emit one JSON object per log record.
 
-    Activate with: BLENDER_BRIDGE_LOG_FORMAT=json
+    Activate with: BLENDER_MCP_LOG_FORMAT=json
     """
 
     def format(self, record: logging.LogRecord) -> str:  # type: ignore[override]

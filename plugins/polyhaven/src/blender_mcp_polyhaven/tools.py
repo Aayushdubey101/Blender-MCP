@@ -12,7 +12,7 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 
 if TYPE_CHECKING:
-    from blender_bridge.client import BlenderClient
+    from blender_mcp.client import BlenderClient
 
 from .schemas import (
     PolyHavenStatusParams,
@@ -26,8 +26,8 @@ logger = logging.getLogger(__name__)
 
 def get_cache_dir() -> Path:
     cache_dir = os.environ.get(
-        "BLENDER_BRIDGE_CACHE_DIR",
-        str(Path.home() / ".cache" / "mcp-blender-bridge" / "assets" / "polyhaven")
+        "BLENDER_MCP_CACHE_DIR",
+        str(Path.home() / ".cache" / "blender-mcp" / "assets" / "polyhaven")
     )
     path = Path(cache_dir)
     path.mkdir(parents=True, exist_ok=True)

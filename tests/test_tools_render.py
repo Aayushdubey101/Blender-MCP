@@ -8,9 +8,9 @@ from unittest.mock import AsyncMock
 
 from mcp.server.fastmcp import FastMCP, Image
 
-from blender_bridge.client import BlenderClient, BlenderConnectionError
-from blender_bridge.schemas import RenderImageInput
-from blender_bridge.tools import render as render_tools
+from blender_mcp.client import BlenderClient, BlenderConnectionError
+from blender_mcp.schemas import RenderImageInput
+from blender_mcp.tools import render as render_tools
 
 
 def _make_mcp(read_only: bool = False):

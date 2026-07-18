@@ -4,17 +4,17 @@ on:
   push:
     branches: [main]
     paths:
-      - "mcp-blender-bridge/**"
+      - "src/**"
+      - "tests/**"
+      - "pyproject.toml"
       - ".github/workflows/ci.yml"
   pull_request:
     branches: [main]
     paths:
-      - "mcp-blender-bridge/**"
+      - "src/**"
+      - "tests/**"
+      - "pyproject.toml"
       - ".github/workflows/ci.yml"
-
-defaults:
-  run:
-    working-directory: mcp-blender-bridge
 
 jobs:
   test:

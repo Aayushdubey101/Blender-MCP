@@ -4,17 +4,17 @@
       "command": "uv",
       "args": [
         "--directory",
-        "/path/to/MCP-HUB/mcp-blender-bridge",
+        "/path/to/Blender-MCP",
         "run",
-        "mcp-blender-bridge"
+        "blender-mcp"
       ],
       "env": {
-        "BLENDER_HOST": "127.0.0.1",
-        "BLENDER_PORT": "9876",
+        "BLENDER_MCP_HOST": "127.0.0.1",
+        "BLENDER_MCP_PORT": "9876",
 
-        "BLENDER_BRIDGE_READ_ONLY": "false",
+        "BLENDER_MCP_READ_ONLY": "false",
 
-        "BLENDER_BRIDGE_LOG_FORMAT": "text",
+        "BLENDER_MCP_LOG_FORMAT": "text",
 
         "POLYHAVEN_CACHE_DIR": "",
 

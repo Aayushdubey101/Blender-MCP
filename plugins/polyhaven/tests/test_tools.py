@@ -10,7 +10,7 @@ import httpx
 import pytest
 import respx
 
-from mcp_blender_bridge_polyhaven.schemas import (
+from blender_mcp_polyhaven.schemas import (
     PolyHavenApplyTextureParams,
     PolyHavenCategoriesParams,
     PolyHavenDownloadParams,
@@ -27,12 +27,12 @@ from mcp_blender_bridge_polyhaven.schemas import (
 def _make_tools(read_only: bool = False, *, client: Any = None) -> dict[str, Any]:
     """Register polyhaven tools against a fake FastMCP and return the tool map.
 
-    Cache-dependent tests must set ``BLENDER_BRIDGE_CACHE_DIR`` via the
+    Cache-dependent tests must set ``BLENDER_MCP_CACHE_DIR`` via the
     ``monkeypatch`` fixture *before* awaiting any tool, since
     ``get_cache_dir()`` reads the env var at tool-invocation time
     (not at registration time).
     """
-    from mcp_blender_bridge_polyhaven.tools import register_tools
+    from blender_mcp_polyhaven.tools import register_tools
 
     tools: dict[str, Any] = {}
 
@@ -210,7 +210,7 @@ class TestPolyHavenDownload:
     @pytest.mark.asyncio
     @respx.mock
     async def test_textures_download_writes_cache(self, tmp_path, monkeypatch) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         respx.get("https://api.polyhaven.com/files/wood_floor").mock(
             return_value=httpx.Response(200, json=_files_response("wood_floor"))
         )
@@ -239,7 +239,7 @@ class TestPolyHavenDownload:
     async def test_textures_download_uses_cache_on_second_call(
         self, tmp_path, monkeypatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         respx.get("https://api.polyhaven.com/files/wood_floor").mock(
             return_value=httpx.Response(200, json=_files_response("wood_floor"))
         )
@@ -311,7 +311,7 @@ class TestPolyHavenApplyTextureFull:
     async def test_apply_texture_downloads_and_calls_bridge(
         self, tmp_path, monkeypatch
     ) -> None:
-        monkeypatch.setenv("BLENDER_BRIDGE_CACHE_DIR", str(tmp_path))
+        monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         respx.get("https://api.polyhaven.com/files/wood_floor").mock(
             return_value=httpx.Response(200, json=_files_response("wood_floor"))
         )

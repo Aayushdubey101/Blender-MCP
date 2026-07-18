@@ -1,1 +1,1 @@
-"""Test suite for mcp-blender-bridge."""
+"""Test suite for blender-mcp."""

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 
 class Hyper3DPlugin:
-    """MCP-Blender-Bridge plugin for Hyper3D Rodin AI 3D generation."""
+    """Blender MCP plugin for Hyper3D Rodin AI 3D generation."""
 
     name = "hyper3d"
     version = "0.1.0"
