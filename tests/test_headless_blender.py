@@ -12,21 +12,16 @@ doesn't require the actual executable:
 from __future__ import annotations
 
 import asyncio
-import sys
-import textwrap
 from pathlib import Path
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from blender_mcp.headless_blender import (
-    BLENDER_LAUNCH_TIMEOUT,
     _make_bootstrap_script,
     _wait_for_port,
     find_blender,
 )
-
 
 # ---------------------------------------------------------------------------
 # find_blender
@@ -58,9 +53,7 @@ class TestFindBlender:
             with pytest.raises(FileNotFoundError, match="Could not locate"):
                 find_blender(None)
 
-    def test_path_shutil_fallback(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_path_shutil_fallback(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         exe = tmp_path / "blender"
         exe.touch()
         monkeypatch.delenv("BLENDER_PATH", raising=False)
@@ -117,9 +110,7 @@ class TestWaitForPort:
     @pytest.mark.asyncio
     async def test_returns_true_when_port_opens(self) -> None:
         """Start a dummy TCP server, then verify _wait_for_port detects it."""
-        server = await asyncio.start_server(
-            lambda r, w: w.close(), "127.0.0.1", 0
-        )
+        server = await asyncio.start_server(lambda r, w: w.close(), "127.0.0.1", 0)
         addr = server.sockets[0].getsockname()
         host, port = addr[0], addr[1]
 
@@ -145,9 +136,7 @@ class TestWaitForPort:
 
 class TestLaunchBlender:
     @pytest.mark.asyncio
-    async def test_raises_if_blender_not_found(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    async def test_raises_if_blender_not_found(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.delenv("BLENDER_PATH", raising=False)
         with patch("shutil.which", return_value=None):
             with pytest.raises(FileNotFoundError):
@@ -189,9 +178,7 @@ class TestLaunchBlender:
         fake_proc.terminate.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_returns_process_when_port_opens(
-        self, tmp_path: Path
-    ) -> None:
+    async def test_returns_process_when_port_opens(self, tmp_path: Path) -> None:
         """Happy path: process returned when addon port opens."""
         exe = tmp_path / "blender"
         exe.touch()

@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 
 from mcp.server.fastmcp import FastMCP
+from mcp.types import ToolAnnotations
 
 from ..client import BlenderClient
 from ..schemas import ExecutePythonInput
@@ -18,13 +19,15 @@ def register(mcp: FastMCP, client: BlenderClient, *, read_only: bool = False) ->
 
     @mcp.tool(
         name="blender_execute_python",
-        annotations={
-            "title": "Execute Python in Blender",
-            "readOnlyHint": False,
-            "destructiveHint": True,
-            "idempotentHint": False,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Execute Python in Blender",
+                "readOnlyHint": False,
+                "destructiveHint": True,
+                "idempotentHint": False,
+                "openWorldHint": False,
+            }
+        ),
     )
     async def blender_execute_python(params: ExecutePythonInput) -> str:
         """Execute arbitrary Python code inside Blender (escape hatch for advanced ops).

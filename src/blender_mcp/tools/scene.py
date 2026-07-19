@@ -6,6 +6,7 @@ import base64
 import logging
 
 from mcp.server.fastmcp import FastMCP, Image
+from mcp.types import ToolAnnotations
 
 from ..client import BRIDGE_PROTOCOL_VERSION, BlenderClient
 from ..schemas import (
@@ -32,7 +33,10 @@ _ANNOTATIONS_RO = {
 def register(mcp: FastMCP, client: BlenderClient) -> None:
     """Register all scene/inspection tools."""
 
-    @mcp.tool(name="blender_ping", annotations={**_ANNOTATIONS_RO, "title": "Ping Blender"})
+    @mcp.tool(
+        name="blender_ping",
+        annotations=ToolAnnotations.model_validate({**_ANNOTATIONS_RO, "title": "Ping Blender"}),
+    )
     async def blender_ping() -> str:
         """Check whether Blender is running and the bridge addon is reachable.
 
@@ -72,7 +76,9 @@ def register(mcp: FastMCP, client: BlenderClient) -> None:
 
     @mcp.tool(
         name="blender_get_scene_info",
-        annotations={**_ANNOTATIONS_RO, "title": "Get Blender Scene Info"},
+        annotations=ToolAnnotations.model_validate(
+            {**_ANNOTATIONS_RO, "title": "Get Blender Scene Info"}
+        ),
     )
     async def blender_get_scene_info(params: GetSceneInfoInput) -> str:
         """Get an overview of the current Blender scene.
@@ -111,7 +117,9 @@ def register(mcp: FastMCP, client: BlenderClient) -> None:
 
     @mcp.tool(
         name="blender_list_objects",
-        annotations={**_ANNOTATIONS_RO, "title": "List Blender Objects"},
+        annotations=ToolAnnotations.model_validate(
+            {**_ANNOTATIONS_RO, "title": "List Blender Objects"}
+        ),
     )
     async def blender_list_objects(params: ListObjectsInput) -> str:
         """List objects in the current Blender scene, optionally filtered by type.
@@ -157,7 +165,7 @@ def register(mcp: FastMCP, client: BlenderClient) -> None:
 
     @mcp.tool(
         name="blender_get_object_info",
-        annotations={**_ANNOTATIONS_RO, "title": "Get Object Info"},
+        annotations=ToolAnnotations.model_validate({**_ANNOTATIONS_RO, "title": "Get Object Info"}),
     )
     async def blender_get_object_info(params: GetObjectInfoInput) -> str:
         """Get detailed information about a specific object by name.
@@ -242,13 +250,15 @@ def register(mcp: FastMCP, client: BlenderClient) -> None:
 
     @mcp.tool(
         name="blender_save_file",
-        annotations={
-            "title": "Save Blender File",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Save Blender File",
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            }
+        ),
     )
     async def blender_save_file(params: SaveFileInput) -> str:
         """Save the current Blender scene to a .blend file.
@@ -275,13 +285,15 @@ def register(mcp: FastMCP, client: BlenderClient) -> None:
 
     @mcp.tool(
         name="blender_open_file",
-        annotations={
-            "title": "Open Blender File",
-            "readOnlyHint": False,
-            "destructiveHint": True,
-            "idempotentHint": False,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Open Blender File",
+                "readOnlyHint": False,
+                "destructiveHint": True,
+                "idempotentHint": False,
+                "openWorldHint": False,
+            }
+        ),
     )
     async def blender_open_file(params: OpenFileInput) -> str:
         """Open a .blend file in Blender, replacing the current scene.
@@ -308,9 +320,11 @@ def register(mcp: FastMCP, client: BlenderClient) -> None:
 
     @mcp.tool(
         name="blender_get_viewport_screenshot",
-        annotations={**_ANNOTATIONS_RO, "title": "Get Viewport Screenshot"},
+        annotations=ToolAnnotations.model_validate(
+            {**_ANNOTATIONS_RO, "title": "Get Viewport Screenshot"}
+        ),
     )
-    async def blender_get_viewport_screenshot(params: ViewportScreenshotInput):  # noqa: ANN201  # Image | str — FastMCP handles Image at runtime
+    async def blender_get_viewport_screenshot(params: ViewportScreenshotInput):  # type: ignore[no-untyped-def]  # noqa: ANN201  # Image | str — FastMCP handles Image at runtime
         """Capture a screenshot of the current Blender 3D viewport.
 
         Renders using OpenGL and returns the image inline. Great for inspecting

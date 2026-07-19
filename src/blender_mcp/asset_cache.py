@@ -37,13 +37,10 @@ import logging
 import os
 import shutil
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_CACHE_BASE = str(
-    Path.home() / ".cache" / "blender-mcp" / "assets"
-)
+_DEFAULT_CACHE_BASE = str(Path.home() / ".cache" / "blender-mcp" / "assets")
 _MAX_AGE_DAYS = 30  # default: prune entries older than this
 
 
@@ -71,7 +68,7 @@ def content_hash(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def sha256_cache_path(data: bytes, filename: str) -> Optional[Path]:
+def sha256_cache_path(data: bytes, filename: str) -> Path | None:
     """Return the cached file path if *data* is already in the SHA-256 cache.
 
     Returns ``None`` if the content has never been stored.

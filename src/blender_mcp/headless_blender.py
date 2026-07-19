@@ -28,11 +28,9 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-import socket
 import sys
 import textwrap
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +53,7 @@ _CANDIDATE_PATHS_UNIX = [
 ]
 
 
-def find_blender(explicit_path: Optional[str] = None) -> Path:
+def find_blender(explicit_path: str | None = None) -> Path:
     """Return the path to the Blender executable.
 
     Search order:
@@ -93,8 +91,7 @@ def find_blender(explicit_path: Optional[str] = None) -> Path:
         return Path(found)
 
     raise FileNotFoundError(
-        "Could not locate the Blender executable. "
-        "Set BLENDER_PATH or pass --blender-path <path>."
+        "Could not locate the Blender executable. Set BLENDER_PATH or pass --blender-path <path>."
     )
 
 
@@ -114,8 +111,7 @@ def _addon_path() -> Path:
         return cwd_candidate
 
     raise FileNotFoundError(
-        f"Could not find blender_addon/blender_mcp.py "
-        f"(searched {candidate} and {cwd_candidate})"
+        f"Could not find blender_addon/blender_mcp.py (searched {candidate} and {cwd_candidate})"
     )
 
 
@@ -166,7 +162,7 @@ async def _wait_for_port(host: str, port: int, timeout: float) -> bool:
 
 
 async def launch_blender(
-    blender_path: Optional[str],
+    blender_path: str | None,
     bridge_host: str,
     bridge_port: int,
 ) -> asyncio.subprocess.Process:
@@ -210,8 +206,12 @@ async def launch_blender(
         stderr=asyncio.subprocess.PIPE,
     )
 
-    logger.info("Blender PID=%d — waiting up to %.0fs for addon port %d …",
-                process.pid, BLENDER_LAUNCH_TIMEOUT, bridge_port)
+    logger.info(
+        "Blender PID=%d — waiting up to %.0fs for addon port %d …",
+        process.pid,
+        BLENDER_LAUNCH_TIMEOUT,
+        bridge_port,
+    )
 
     ready = await _wait_for_port(bridge_host, bridge_port, BLENDER_LAUNCH_TIMEOUT)
     if not ready:

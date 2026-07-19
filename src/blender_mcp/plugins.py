@@ -74,7 +74,7 @@ def _iter_entry_points() -> list[EntryPoint]:
     # an iterable of EntryPoint objects.
     if hasattr(eps, "select"):
         return list(eps.select(group=PLUGIN_GROUP))
-    return list(eps.get(PLUGIN_GROUP, []))  # type: ignore[attr-defined]
+    return list(eps.get(PLUGIN_GROUP, []))
 
 
 def discover_plugins() -> list[BlenderMCPPlugin]:

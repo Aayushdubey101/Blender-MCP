@@ -12,8 +12,8 @@ class JsonFormatter(logging.Formatter):
     Activate with: BLENDER_MCP_LOG_FORMAT=json
     """
 
-    def format(self, record: logging.LogRecord) -> str:  # type: ignore[override]
-        obj: dict = {
+    def format(self, record: logging.LogRecord) -> str:
+        obj: dict[str, object] = {
             "ts": self.formatTime(record, self.datefmt),
             "level": record.levelname,
             "logger": record.name,

@@ -24,9 +24,12 @@ def test_every_cmd_function_is_in_dispatch_table() -> None:
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id == "COMMAND_HANDLERS":
                     dict_node = node.value
-        elif isinstance(node, ast.AnnAssign):
-            if isinstance(node.target, ast.Name) and node.target.id == "COMMAND_HANDLERS":
-                dict_node = node.value
+        elif (
+            isinstance(node, ast.AnnAssign)
+            and isinstance(node.target, ast.Name)
+            and node.target.id == "COMMAND_HANDLERS"
+        ):
+            dict_node = node.value
         if isinstance(dict_node, ast.Dict):
             for v in dict_node.values:
                 if isinstance(v, ast.Name):

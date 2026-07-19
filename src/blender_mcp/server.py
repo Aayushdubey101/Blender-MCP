@@ -23,8 +23,9 @@ import logging
 import os
 import secrets
 import sys
+from collections.abc import Awaitable, Callable
 from importlib.metadata import version as _pkg_version
-from typing import TYPE_CHECKING, Any, Awaitable, Callable
+from typing import TYPE_CHECKING, Any
 
 import uvicorn
 from mcp.server.fastmcp import FastMCP

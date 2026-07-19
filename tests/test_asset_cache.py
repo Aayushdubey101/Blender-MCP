@@ -15,7 +15,6 @@ from blender_mcp.asset_cache import (
     store_in_sha256_cache,
 )
 
-
 # ---------------------------------------------------------------------------
 # content_hash
 # ---------------------------------------------------------------------------
@@ -69,9 +68,7 @@ class TestSha256Cache:
         result = sha256_cache_path(data, "model.glb")
         assert result is None
 
-    def test_hit_after_store(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_hit_after_store(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         data = b"GLB binary content"
         stored = store_in_sha256_cache(data, "model.glb")
@@ -82,9 +79,7 @@ class TestSha256Cache:
         assert hit is not None
         assert hit == stored
 
-    def test_store_idempotent(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_store_idempotent(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         data = b"repeated content"
         p1 = store_in_sha256_cache(data, "file.glb")
@@ -151,9 +146,7 @@ class TestPruneSha256Cache:
         assert stored.exists()
 
     @pytest.mark.asyncio
-    async def test_prune_empty_dirs(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    async def test_prune_empty_dirs(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("BLENDER_MCP_CACHE_DIR", str(tmp_path))
         # Create an empty dir inside sha256/
         sha_dir = tmp_path / "sha256"

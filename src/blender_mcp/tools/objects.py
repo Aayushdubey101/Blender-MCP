@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 
 from mcp.server.fastmcp import FastMCP
+from mcp.types import ToolAnnotations
 
 from ..client import BlenderClient
 from ..schemas import (
@@ -31,13 +32,15 @@ def register(mcp: FastMCP, client: BlenderClient, *, read_only: bool = False) ->
 
     @mcp.tool(
         name="blender_create_primitive",
-        annotations={
-            "title": "Create Primitive Mesh",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Create Primitive Mesh",
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": False,
+                "openWorldHint": False,
+            }
+        ),
     )
     async def blender_create_primitive(params: CreatePrimitiveInput) -> str:
         """Create a primitive mesh (cube, sphere, cylinder, etc.) in the scene.
@@ -74,13 +77,15 @@ def register(mcp: FastMCP, client: BlenderClient, *, read_only: bool = False) ->
 
     @mcp.tool(
         name="blender_transform_object",
-        annotations={
-            "title": "Transform Object",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Transform Object",
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            }
+        ),
     )
     async def blender_transform_object(params: TransformObjectInput) -> str:
         """Set location, rotation, and/or scale of an existing object.
@@ -125,13 +130,15 @@ def register(mcp: FastMCP, client: BlenderClient, *, read_only: bool = False) ->
 
     @mcp.tool(
         name="blender_delete_object",
-        annotations={
-            "title": "Delete Object",
-            "readOnlyHint": False,
-            "destructiveHint": True,
-            "idempotentHint": True,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Delete Object",
+                "readOnlyHint": False,
+                "destructiveHint": True,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            }
+        ),
     )
     async def blender_delete_object(params: DeleteObjectInput) -> str:
         """Delete an object from the scene by name.
@@ -162,13 +169,15 @@ def register(mcp: FastMCP, client: BlenderClient, *, read_only: bool = False) ->
 
     @mcp.tool(
         name="blender_set_material",
-        annotations={
-            "title": "Set Object Material",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Set Object Material",
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            }
+        ),
     )
     async def blender_set_material(params: SetMaterialInput) -> str:
         """Apply a PBR material to an object using Principled BSDF.
@@ -213,13 +222,15 @@ def register(mcp: FastMCP, client: BlenderClient, *, read_only: bool = False) ->
 
     @mcp.tool(
         name="blender_add_light",
-        annotations={
-            "title": "Add Light",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Add Light",
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": False,
+                "openWorldHint": False,
+            }
+        ),
     )
     async def blender_add_light(params: AddLightInput) -> str:
         """Add a light source to the scene.
@@ -264,13 +275,15 @@ def register(mcp: FastMCP, client: BlenderClient, *, read_only: bool = False) ->
 
     @mcp.tool(
         name="blender_set_camera",
-        annotations={
-            "title": "Set Camera",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Set Camera",
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            }
+        ),
     )
     async def blender_set_camera(params: SetCameraInput) -> str:
         """Configure a camera's position, aim target, and focal length.

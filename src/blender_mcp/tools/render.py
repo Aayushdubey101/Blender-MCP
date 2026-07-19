@@ -6,6 +6,7 @@ import base64
 import logging
 
 from mcp.server.fastmcp import FastMCP, Image
+from mcp.types import ToolAnnotations
 
 from ..client import BlenderClient
 from ..schemas import RenderImageInput
@@ -19,15 +20,17 @@ def register(mcp: FastMCP, client: BlenderClient, *, read_only: bool = False) ->
 
     @mcp.tool(
         name="blender_render_image",
-        annotations={
-            "title": "Render Image",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-            "openWorldHint": False,
-        },
+        annotations=ToolAnnotations.model_validate(
+            {
+                "title": "Render Image",
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": False,
+                "openWorldHint": False,
+            }
+        ),
     )
-    async def blender_render_image(params: RenderImageInput):  # noqa: ANN201  # list[str | Image] — FastMCP handles Image at runtime
+    async def blender_render_image(params: RenderImageInput):  # type: ignore[no-untyped-def]  # noqa: ANN201  # list[str | Image] — FastMCP handles Image at runtime
         """Render a frame using Blender's render engine and return the result inline.
 
         Blocks until the render is complete. For fast previews use EEVEE; for

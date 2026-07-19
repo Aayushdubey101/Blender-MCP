@@ -359,8 +359,7 @@ class SaveFileInput(StrictModel):
     filepath: str | None = Field(
         default=None,
         description=(
-            "Absolute path to save the .blend file. "
-            "Uses the currently open file path if omitted."
+            "Absolute path to save the .blend file. Uses the currently open file path if omitted."
         ),
         min_length=1,
         max_length=4096,
