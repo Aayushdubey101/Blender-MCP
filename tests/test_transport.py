@@ -139,10 +139,12 @@ def test_main_stdio_default(mock_mcp_run):
 
 
 @patch("sys.argv", ["blender-mcp", "--list-plugins"])
+@patch("blender_mcp.server.list_plugins_text", return_value="Installed plugins:\n  - demo\n")
 @patch("blender_mcp.server.mcp.run")
-def test_main_list_plugins_does_not_start_server(mock_mcp_run, capsys):
+def test_main_list_plugins_does_not_start_server(mock_mcp_run, mock_list, capsys):
     """--list-plugins prints the plugin list and does not start the server."""
     main()
     mock_mcp_run.assert_not_called()
+    mock_list.assert_called_once()
     captured = capsys.readouterr()
     assert "Installed plugins:" in captured.out
